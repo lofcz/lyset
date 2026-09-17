@@ -48,7 +48,7 @@ pub fn render(ir: &PrintDocument) -> Result<(Document, RenderReport), String> {
     doc.set_header_footer_distance(Length::mm(t::HEADER_DISTANCE_MM), Length::mm(t::FOOTER_DISTANCE_MM));
     ctx.content_w = page_w - m[1] - m[3];
     doc.set_title(&ir.title);
-    doc.set_author("ScioBot");
+    doc.set_author("lyset");
 
     // Pre-embed every image and hyperlink so cells can reference them.
     collect_assets(&mut doc, &mut ctx, &ir.blocks);
@@ -478,10 +478,9 @@ fn write_inlines_inner(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline],
     }
 }
 
-/// Insert an Office Math object. The client renders LaTeX to presentation
-/// MathML with KaTeX; `rdocx` converts that to OMML. IR produced without a
-/// renderer (tests, hand-written fixtures) still carries LaTeX only, which
-/// goes through `rdocx`'s LaTeX subset with its diagnostics surfaced.
+/// Insert an Office Math object. Prefer presentation MathML (`mathml`);
+/// `rdocx` converts that to OMML. IR with only `tex` uses rdocx's LaTeX
+/// subset, with diagnostics surfaced as warnings.
 fn write_math(
     ctx: &mut Ctx,
     p: &mut Paragraph<'_>,

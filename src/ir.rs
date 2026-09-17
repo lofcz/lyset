@@ -1,7 +1,7 @@
-//! Print-document IR — serde mirror of `sciobot-next/supabase/functions/_shared/print-ir/schema.ts`.
+//! Print-document IR — the JSON schema this crate renders.
 //!
-//! Keep field names, enum values and defaults 1:1 with the TypeScript zod
-//! schema. Unknown fields are rejected so drift is caught at the boundary.
+//! Field names, enum values and defaults are the public contract. Unknown
+//! fields are rejected so producers and this renderer stay in lockstep.
 
 use serde::Deserialize;
 
@@ -116,8 +116,8 @@ pub enum Inline {
         tone: Option<Tone>,
     },
     /// Inline formula. `tex` is the authored LaTeX (kept for text fallbacks
-    /// and diagnostics); `mathml` is the presentation MathML the client
-    /// rendered from it with KaTeX and is what gets converted to OMML.
+    /// and diagnostics); `mathml` is optional presentation MathML, converted
+    /// to OMML when present.
     Math {
         tex: String,
         #[serde(default)]

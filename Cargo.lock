@@ -525,6 +525,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
 
 [[package]]
+name = "lyset"
+version = "0.1.0"
+dependencies = [
+ "base64 0.22.1",
+ "oxml-media",
+ "rdocx",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "markup5ever"
 version = "0.39.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -901,17 +912,6 @@ dependencies = [
  "quick-xml",
  "regex",
  "thiserror",
-]
-
-[[package]]
-name = "rdocx-sidecar"
-version = "0.1.0"
-dependencies = [
- "base64 0.22.1",
- "oxml-media",
- "rdocx",
- "serde",
- "serde_json",
 ]
 
 [[package]]

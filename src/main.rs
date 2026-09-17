@@ -1,11 +1,8 @@
-//! lyset (`rdocx-sidecar`): CLI around the sibling `rdocx` crate.
-//!
-//! Renders the ScioBot print-document IR (see `sciobot-next/src/lib/print-ir`)
-//! to DOCX and, through rdocx's layout engine, to PDF and per-page PNGs.
+//! lyset: render a print-document IR to DOCX, PDF, and page PNGs via rdocx.
 //!
 //! ```text
-//! rdocx-sidecar render <ir.json> --docx <out.docx> [--pdf <out.pdf>] [--png-dir <dir>] [--dpi <n>]
-//! rdocx-sidecar convert <source.docx> --to <pdf|html|md> -o <output>   (reserved, exit 2)
+//! lyset render <ir.json> --docx <out.docx> [--pdf <out.pdf>] [--png-dir <dir>] [--dpi <n>]
+//! lyset convert <source.docx> --to <pdf|html|md> -o <output>   (reserved, exit 2)
 //! ```
 //!
 //! stdout: one JSON object `{ "pages": n|null, "warnings": [...] }`.
@@ -33,7 +30,7 @@ fn main() -> ExitCode {
             }
         },
         "convert" => {
-            eprintln!("error: rdocx-sidecar convert is not implemented");
+            eprintln!("error: lyset convert is not implemented");
             ExitCode::from(2)
         }
         _ => {
@@ -87,7 +84,7 @@ fn run_render(args: &[String]) -> Result<ExitCode, String> {
         Ok(a) => a,
         Err(e) => {
             eprintln!("error: {e}");
-            eprint_usage("rdocx-sidecar");
+            eprint_usage("lyset");
             return Ok(ExitCode::from(2));
         }
     };

@@ -1,18 +1,13 @@
 [package]
-name = "rdocx-sidecar"
+name = "lyset"
 version = "0.1.0"
 edition = "2021"
-description = "Lyset: renders the ScioBot print-document IR (JSON) to DOCX / PDF / PNG via the sibling rdocx crate."
+description = "Render a print-document IR to DOCX, PDF, and page PNGs via rdocx."
 repository = "https://github.com/lofcz/lyset"
 
-[[bin]]
-name = "rdocx-sidecar"
-path = "src/main.rs"
-
 [dependencies]
-# Sibling checkout: GitHub/rdocx. `system-fonts` is off on purpose so PDF/PNG
-# output is deterministic across dev machines and servers (bundled Carlito /
-# Caladea / Liberation are metric-compatible with Calibri / Cambria / Arial).
+# Sibling checkout: GitHub/rdocx. `system-fonts` is off so PDF/PNG output is
+# deterministic (bundled Carlito / Caladea / Liberation).
 rdocx = { path = "../rdocx/crates/rdocx", default-features = false }
 oxml-media = { path = "../rdocx/crates/oxml-media" }
 serde = { version = "1", features = ["derive"] }
