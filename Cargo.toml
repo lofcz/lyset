@@ -6,10 +6,10 @@ description = "Render a print-document IR to DOCX, PDF, and page PNGs via rdocx.
 repository = "https://github.com/lofcz/lyset"
 
 [dependencies]
-# Sibling checkout: GitHub/rdocx. `system-fonts` is off so PDF/PNG output is
-# deterministic (bundled Carlito / Caladea / Liberation).
-rdocx = { path = "../rdocx/crates/rdocx", default-features = false }
-oxml-media = { path = "../rdocx/crates/oxml-media" }
+# `system-fonts` is off so PDF/PNG output is deterministic (bundled Carlito /
+# Caladea / Liberation).
+rdocx = { git = "https://github.com/lofcz/rdocx", default-features = false }
+oxml-media = { git = "https://github.com/lofcz/rdocx" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 base64 = "0.22"
