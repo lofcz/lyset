@@ -181,7 +181,21 @@ fn roman_lower(mut n: i64) -> String {
 fn image_key(image: &Image) -> u64 {
     let mut h = std::collections::hash_map::DefaultHasher::new();
     image.data.hash(&mut h);
+    image.path.hash(&mut h);
     h.finish()
+}
+
+/// Raw picture bytes from `data` (base64) or `path`; the message names the
+/// source so a warning points at the right thing.
+fn image_bytes(image: &Image) -> Result<Vec<u8>, String> {
+    match (&image.data, &image.path) {
+        (Some(data), None) => base64::engine::general_purpose::STANDARD
+            .decode(data.trim())
+            .map_err(|e| format!("invalid base64 ({e})")),
+        (None, Some(path)) => std::fs::read(path).map_err(|e| format!("read {}: {e}", path.display())),
+        (Some(_), Some(_)) => Err("both data and path given".to_string()),
+        (None, None) => Err("neither data nor path given".to_string()),
+    }
 }
 
 fn collect_assets(doc: &mut Document, ctx: &mut Ctx, blocks: &[Block]) {
@@ -248,10 +262,10 @@ fn embed_image(doc: &mut Document, ctx: &mut Ctx, image: &Image) {
     if ctx.images.contains_key(&key) {
         return;
     }
-    let bytes = match base64::engine::general_purpose::STANDARD.decode(image.data.trim()) {
+    let bytes = match image_bytes(image) {
         Ok(b) => b,
         Err(e) => {
-            ctx.warnings.push(format!("image: invalid base64 ({e})"));
+            ctx.warnings.push(format!("image: {e}"));
             return;
         }
     };
@@ -1805,10 +1819,10 @@ impl FooterMark {
 /// Decodes and sizes the footer mark; `None` (with a warning) when the image
 /// data is unusable, so a broken logo never blocks the document.
 fn footer_mark(ctx: &mut Ctx, mark: &crate::ir::Watermark) -> Option<FooterMark> {
-    let bytes = match base64::engine::general_purpose::STANDARD.decode(mark.image.data.trim()) {
+    let bytes = match image_bytes(&mark.image) {
         Ok(b) => b,
         Err(e) => {
-            ctx.warnings.push(format!("watermark: invalid base64 ({e})"));
+            ctx.warnings.push(format!("watermark: {e}"));
             return None;
         }
     };
@@ -1931,6 +1945,32 @@ mod tests {
         assert!((mark_x + mark_w - right_margin_x).abs() < 1.0, "flush with the right margin: {mark_x} + {mark_w} vs {right_margin_x}");
         let page_number_x = page_number_x.expect("page number field in the footer");
         assert!(page_number_x < mark_x - FOOTER_MARK_GAP_MM * 72.0 / 25.4 * 0.9, "page number sits left of the mark: {page_number_x} vs {mark_x}");
+    }
+
+    #[test]
+    fn pictures_load_from_a_path_and_need_exactly_one_source() {
+        let dir = std::env::temp_dir().join(format!("lyset-path-image-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let file = dir.join("pixel.png");
+        std::fs::write(&file, base64::engine::general_purpose::STANDARD.decode(PIXEL_PNG_B64).unwrap()).unwrap();
+
+        let ir = parse(&format!(
+            r##"{{ "version": 1, "locale": "cs", "kind": "lesson", "title": "Obrázky", "blocks": [
+                {{ "kind": "image", "image": {{ "path": {path}, "mime": "image/png" }} }},
+                {{ "kind": "image", "image": {{ "data": "{PIXEL_PNG_B64}", "path": {path}, "mime": "image/png" }} }},
+                {{ "kind": "image", "image": {{ "mime": "image/png" }} }},
+                {{ "kind": "image", "image": {{ "path": {missing}, "mime": "image/png" }} }}
+            ] }}"##,
+            path = serde_json::to_string(&file).unwrap(),
+            missing = serde_json::to_string(&dir.join("missing.png")).unwrap(),
+        ));
+        let (doc, report) = render(&ir).expect("render");
+        assert_eq!(doc.images().len(), 1, "only the well-formed path picture is embedded");
+        assert_eq!(report.warnings.len(), 3, "{:?}", report.warnings);
+        assert!(report.warnings.iter().any(|w| w.contains("both data and path")));
+        assert!(report.warnings.iter().any(|w| w.contains("neither data nor path")));
+        assert!(report.warnings.iter().any(|w| w.contains("missing.png")));
+        std::fs::remove_dir_all(&dir).unwrap();
     }
 
     #[test]

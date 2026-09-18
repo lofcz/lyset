@@ -214,12 +214,19 @@ pub enum RuleTone {
     Accent,
 }
 
+/// Picture bytes come either inline (`data`, base64) or from a file the
+/// caller controls (`path`) — exactly one of the two. Large exports use
+/// `path` so the IR stays small.
+///
 /// `alt` is accepted for schema parity; DOCX pictures carry no alt text yet.
 #[allow(dead_code)]
 #[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Image {
-    pub data: String,
+    #[serde(default)]
+    pub data: Option<String>,
+    #[serde(default)]
+    pub path: Option<std::path::PathBuf>,
     pub mime: String,
     #[serde(default)]
     pub alt: Option<String>,
