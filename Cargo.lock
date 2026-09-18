@@ -304,11 +304,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "fontconfig-parser"
+version = "0.5.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbc773e24e02d4ddd8395fd30dc147524273a83e54e0f312d986ea30de5f5646"
+dependencies = [
+ "roxmltree",
+]
+
+[[package]]
 name = "fontdb"
 version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "457e789b3d1202543297a350643cf459f836cade38934e7a4cf6a39e7cde2905"
 dependencies = [
+ "fontconfig-parser",
  "log",
  "slotmap",
  "tinyvec",
@@ -529,6 +539,7 @@ name = "lyset"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",
+ "oxml-layout",
  "oxml-media",
  "rdocx",
  "serde",
@@ -623,7 +634,7 @@ checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 [[package]]
 name = "oxml-chart"
 version = "0.11.0"
-source = "git+https://github.com/lofcz/rdocx#2af98c15421dda5ce71f338f115a9d7ecd430ce0"
+source = "git+https://github.com/lofcz/rdocx#4931e573066cfbb46da23cbb0c8cd9cb91cc1265"
 dependencies = [
  "oxml-core",
  "oxml-drawing",
@@ -635,7 +646,7 @@ dependencies = [
 [[package]]
 name = "oxml-core"
 version = "0.11.0"
-source = "git+https://github.com/lofcz/rdocx#2af98c15421dda5ce71f338f115a9d7ecd430ce0"
+source = "git+https://github.com/lofcz/rdocx#4931e573066cfbb46da23cbb0c8cd9cb91cc1265"
 dependencies = [
  "quick-xml",
  "thiserror",
@@ -644,7 +655,7 @@ dependencies = [
 [[package]]
 name = "oxml-drawing"
 version = "0.11.0"
-source = "git+https://github.com/lofcz/rdocx#2af98c15421dda5ce71f338f115a9d7ecd430ce0"
+source = "git+https://github.com/lofcz/rdocx#4931e573066cfbb46da23cbb0c8cd9cb91cc1265"
 dependencies = [
  "oxml-core",
  "quick-xml",
@@ -653,7 +664,7 @@ dependencies = [
 [[package]]
 name = "oxml-layout"
 version = "0.11.0"
-source = "git+https://github.com/lofcz/rdocx#2af98c15421dda5ce71f338f115a9d7ecd430ce0"
+source = "git+https://github.com/lofcz/rdocx#4931e573066cfbb46da23cbb0c8cd9cb91cc1265"
 dependencies = [
  "fontdb",
  "harfrust",
@@ -668,12 +679,12 @@ dependencies = [
 [[package]]
 name = "oxml-media"
 version = "0.11.0"
-source = "git+https://github.com/lofcz/rdocx#2af98c15421dda5ce71f338f115a9d7ecd430ce0"
+source = "git+https://github.com/lofcz/rdocx#4931e573066cfbb46da23cbb0c8cd9cb91cc1265"
 
 [[package]]
 name = "oxml-opc"
 version = "0.11.0"
-source = "git+https://github.com/lofcz/rdocx#2af98c15421dda5ce71f338f115a9d7ecd430ce0"
+source = "git+https://github.com/lofcz/rdocx#4931e573066cfbb46da23cbb0c8cd9cb91cc1265"
 dependencies = [
  "quick-xml",
  "thiserror",
@@ -683,7 +694,7 @@ dependencies = [
 [[package]]
 name = "oxml-pdf"
 version = "0.11.0"
-source = "git+https://github.com/lofcz/rdocx#2af98c15421dda5ce71f338f115a9d7ecd430ce0"
+source = "git+https://github.com/lofcz/rdocx#4931e573066cfbb46da23cbb0c8cd9cb91cc1265"
 dependencies = [
  "jpeg-encoder",
  "miniz_oxide 0.9.1",
@@ -700,7 +711,7 @@ dependencies = [
 [[package]]
 name = "oxml-sml"
 version = "0.11.0"
-source = "git+https://github.com/lofcz/rdocx#2af98c15421dda5ce71f338f115a9d7ecd430ce0"
+source = "git+https://github.com/lofcz/rdocx#4931e573066cfbb46da23cbb0c8cd9cb91cc1265"
 dependencies = [
  "oxml-opc",
  "quick-xml",
@@ -870,7 +881,7 @@ dependencies = [
 [[package]]
 name = "rdocx"
 version = "0.13.2"
-source = "git+https://github.com/lofcz/rdocx#2af98c15421dda5ce71f338f115a9d7ecd430ce0"
+source = "git+https://github.com/lofcz/rdocx#4931e573066cfbb46da23cbb0c8cd9cb91cc1265"
 dependencies = [
  "base64 0.23.1",
  "encoding_rs",
@@ -897,7 +908,7 @@ dependencies = [
 [[package]]
 name = "rdocx-html"
 version = "0.13.2"
-source = "git+https://github.com/lofcz/rdocx#2af98c15421dda5ce71f338f115a9d7ecd430ce0"
+source = "git+https://github.com/lofcz/rdocx#4931e573066cfbb46da23cbb0c8cd9cb91cc1265"
 dependencies = [
  "rdocx-oxml",
 ]
@@ -905,7 +916,7 @@ dependencies = [
 [[package]]
 name = "rdocx-layout"
 version = "0.13.2"
-source = "git+https://github.com/lofcz/rdocx#2af98c15421dda5ce71f338f115a9d7ecd430ce0"
+source = "git+https://github.com/lofcz/rdocx#4931e573066cfbb46da23cbb0c8cd9cb91cc1265"
 dependencies = [
  "oxml-chart",
  "oxml-drawing",
@@ -916,7 +927,7 @@ dependencies = [
 [[package]]
 name = "rdocx-oxml"
 version = "0.13.2"
-source = "git+https://github.com/lofcz/rdocx#2af98c15421dda5ce71f338f115a9d7ecd430ce0"
+source = "git+https://github.com/lofcz/rdocx#4931e573066cfbb46da23cbb0c8cd9cb91cc1265"
 dependencies = [
  "itoa",
  "oxml-core",
@@ -984,6 +995,12 @@ name = "regex-syntax"
 version = "0.8.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
+
+[[package]]
+name = "roxmltree"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6c20b6793b5c2fa6553b250154b78d6d0db37e72700ae35fad9387a46f487c97"
 
 [[package]]
 name = "rustc-hash"

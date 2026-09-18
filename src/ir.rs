@@ -23,7 +23,20 @@ pub struct PrintDocument {
     pub page: Option<Page>,
     #[serde(default)]
     pub theme: Option<Theme>,
+    /// Logo printed at the right end of the footer on every page (page
+    /// numbers move left of it). Used for brand / free-tier marks.
+    #[serde(default)]
+    pub watermark: Option<Watermark>,
     pub blocks: Vec<Block>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Watermark {
+    pub image: Image,
+    /// Printed width; the height follows the image aspect. Default 22 mm.
+    #[serde(default, rename = "widthMm")]
+    pub width_mm: Option<f64>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]

@@ -14,6 +14,10 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 base64 = "0.22"
 
+[dev-dependencies]
+# Page-frame inspection in render tests.
+oxml-layout = { git = "https://github.com/lofcz/rdocx" }
+
 [profile.release]
 opt-level = 3
 lto = true

@@ -56,7 +56,7 @@ pub fn render(ir: &PrintDocument) -> Result<(Document, RenderReport), String> {
     let frame = Frame::new(ctx.content_w);
     render_blocks(&mut doc, &mut ctx, &frame, &ir.blocks);
 
-    install_header_footer(&mut doc, &ctx, ir);
+    install_header_footer(&mut doc, &mut ctx, ir);
 
     Ok((doc, RenderReport { warnings: ctx.warnings }))
 }
@@ -1710,7 +1710,7 @@ fn page_number_runs(format: &str, rpr_xml: &str) -> String {
     out
 }
 
-fn install_header_footer(doc: &mut Document, ctx: &Ctx, ir: &PrintDocument) {
+fn install_header_footer(doc: &mut Document, ctx: &mut Ctx, ir: &PrintDocument) {
     const NS: &str = "xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\"";
     let right_tab = (ctx.content_w * 56.6929).round() as i64; // mm → twips
     let muted = rpr(17, t::MUTED, false);
@@ -1733,16 +1733,105 @@ fn install_header_footer(doc: &mut Document, ctx: &Ctx, ir: &PrintDocument) {
     let left = footer.and_then(|f| f.left.as_deref()).unwrap_or("");
     let page_numbers = footer.and_then(|f| f.page_numbers).unwrap_or(true);
     let format = footer.and_then(|f| f.page_number_format.as_deref()).unwrap_or("{page} / {pages}");
-    if left.is_empty() && !page_numbers {
+    let mark = ir.watermark.as_ref().and_then(|w| footer_mark(ctx, w));
+    if left.is_empty() && !page_numbers && mark.is_none() {
         return;
     }
     let left_xml = if left.is_empty() { String::new() } else { text_run(left, &muted) };
-    let right_xml = if page_numbers { page_number_runs(format, &muted) } else { String::new() };
+    let numbers_xml = if page_numbers { page_number_runs(format, &muted) } else { String::new() };
+
+    // `left ⇥ page numbers` on one right tab; with a mark, the numbers move to
+    // a second right tab left of the picture so the two never overlap.
+    let (tabs_xml, right_xml, images): (String, String, Vec<(&str, &[u8], &str)>) = match &mark {
+        None => (
+            format!("<w:tab w:val=\"right\" w:pos=\"{right_tab}\"/>"),
+            format!("<w:r>{muted}<w:tab/></w:r>{numbers_xml}"),
+            Vec::new(),
+        ),
+        Some(mark) => {
+            let numbers_tab = ((ctx.content_w - mark.width_mm - FOOTER_MARK_GAP_MM) * 56.6929).round() as i64;
+            let numbers = if page_numbers { format!("<w:r>{muted}<w:tab/></w:r>{numbers_xml}") } else { String::new() };
+            (
+                format!("<w:tab w:val=\"right\" w:pos=\"{numbers_tab}\"/><w:tab w:val=\"right\" w:pos=\"{right_tab}\"/>"),
+                format!("{numbers}<w:r>{muted}<w:tab/></w:r>{}", mark.drawing_xml(&muted)),
+                vec![(FOOTER_MARK_REL_ID, mark.bytes.as_slice(), mark.filename)],
+            )
+        }
+    };
     let xml = format!(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><w:ftr {NS}><w:p><w:pPr><w:pBdr><w:top w:val=\"single\" w:sz=\"4\" w:space=\"4\" w:color=\"{rule}\"/></w:pBdr><w:tabs><w:tab w:val=\"right\" w:pos=\"{right_tab}\"/></w:tabs><w:spacing w:before=\"0\" w:after=\"0\"/></w:pPr>{left_xml}<w:r>{muted}<w:tab/></w:r>{right_xml}</w:p></w:ftr>",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><w:ftr {NS}><w:p><w:pPr><w:pBdr><w:top w:val=\"single\" w:sz=\"4\" w:space=\"4\" w:color=\"{rule}\"/></w:pBdr><w:tabs>{tabs_xml}</w:tabs><w:spacing w:before=\"0\" w:after=\"0\"/></w:pPr>{left_xml}{right_xml}</w:p></w:ftr>",
         rule = t::RULE,
     );
-    doc.set_raw_footer_with_images(xml.into_bytes(), &[], HdrFtrType::Default);
+    doc.set_raw_footer_with_images(xml.into_bytes(), &images, HdrFtrType::Default);
+}
+
+/// Relationship id the footer picture is authored with; rdocx remaps on clash.
+const FOOTER_MARK_REL_ID: &str = "rIdMark";
+/// Space between the page number and the footer mark.
+const FOOTER_MARK_GAP_MM: f64 = 5.0;
+const FOOTER_MARK_DEFAULT_WIDTH_MM: f64 = 22.0;
+const EMU_PER_MM: f64 = 36000.0;
+
+struct FooterMark {
+    bytes: Vec<u8>,
+    filename: &'static str,
+    width_mm: f64,
+    height_mm: f64,
+    alt: String,
+}
+
+impl FooterMark {
+    /// Inline picture run; sits on the text baseline of the footer line.
+    fn drawing_xml(&self, rpr_xml: &str) -> String {
+        let cx = (self.width_mm * EMU_PER_MM).round() as i64;
+        let cy = (self.height_mm * EMU_PER_MM).round() as i64;
+        format!(
+            "<w:r>{rpr_xml}<w:drawing><wp:inline xmlns:wp=\"http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing\" distT=\"0\" distB=\"0\" distL=\"0\" distR=\"0\">\
+<wp:extent cx=\"{cx}\" cy=\"{cy}\"/><wp:effectExtent l=\"0\" t=\"0\" r=\"0\" b=\"0\"/>\
+<wp:docPr id=\"1\" name=\"watermark\" descr=\"{alt}\"/>\
+<wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" noChangeAspect=\"1\"/></wp:cNvGraphicFramePr>\
+<a:graphic xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><a:graphicData uri=\"http://schemas.openxmlformats.org/drawingml/2006/picture\">\
+<pic:pic xmlns:pic=\"http://schemas.openxmlformats.org/drawingml/2006/picture\"><pic:nvPicPr><pic:cNvPr id=\"0\" name=\"{file}\"/><pic:cNvPicPr/></pic:nvPicPr>\
+<pic:blipFill><a:blip r:embed=\"{rel}\"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>\
+<pic:spPr><a:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"{cx}\" cy=\"{cy}\"/></a:xfrm><a:prstGeom prst=\"rect\"><a:avLst/></a:prstGeom></pic:spPr>\
+</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>",
+            alt = xml_escape(&self.alt),
+            file = self.filename,
+            rel = FOOTER_MARK_REL_ID,
+        )
+    }
+}
+
+/// Decodes and sizes the footer mark; `None` (with a warning) when the image
+/// data is unusable, so a broken logo never blocks the document.
+fn footer_mark(ctx: &mut Ctx, mark: &crate::ir::Watermark) -> Option<FooterMark> {
+    let bytes = match base64::engine::general_purpose::STANDARD.decode(mark.image.data.trim()) {
+        Ok(b) => b,
+        Err(e) => {
+            ctx.warnings.push(format!("watermark: invalid base64 ({e})"));
+            return None;
+        }
+    };
+    let Some(info) = oxml_media::probe(&bytes) else {
+        ctx.warnings.push(format!("watermark: unsupported or corrupt image ({} bytes, {})", bytes.len(), mark.image.mime));
+        return None;
+    };
+    let filename = match mark.image.mime.as_str() {
+        "image/jpeg" => "watermark.jpg",
+        "image/gif" => "watermark.gif",
+        "image/webp" => "watermark.webp",
+        _ => "watermark.png",
+    };
+    // Never wider than a third of the line: the footer text must keep room.
+    let width_mm = mark.width_mm.unwrap_or(FOOTER_MARK_DEFAULT_WIDTH_MM).clamp(5.0, ctx.content_w / 3.0);
+    let aspect = info.height_px.max(1) as f64 / info.width_px.max(1) as f64;
+    Some(FooterMark {
+        bytes,
+        filename,
+        width_mm,
+        height_mm: width_mm * aspect,
+        alt: mark.image.alt.clone().unwrap_or_default(),
+    })
 }
 
 #[cfg(test)]
@@ -1810,6 +1899,48 @@ mod tests {
         // Task 1 (prompt + options table) also keeps its prompt with the table.
         let prompt1 = keeps.iter().position(|(t, _)| t.starts_with("1.")).expect("task 1 prompt");
         assert!(keeps[prompt1].1);
+    }
+
+    /// 1×1 transparent PNG.
+    const PIXEL_PNG_B64: &str = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWNgYGD4DwABBAEAHnOcQAAAAABJRU5ErkJggg==";
+
+    #[test]
+    fn a_watermark_is_drawn_at_the_footer_s_right_end_on_every_page() {
+        let mut ir = sample_test();
+        ir.watermark = Some(serde_json::from_str(&format!(
+            r#"{{ "image": {{ "data": "{PIXEL_PNG_B64}", "mime": "image/png", "alt": "Brand" }}, "widthMm": 20 }}"#
+        )).unwrap());
+        let (doc, report) = render(&ir).expect("render");
+        assert!(report.warnings.is_empty(), "warnings: {:?}", report.warnings);
+
+        let page = doc.layout_page(0).expect("layout").expect("one page");
+        let mut footer_images = Vec::new();
+        let mut page_number_x = None;
+        oxml_layout::walk(&page.elements, &mut |element, transform| match element {
+            oxml_layout::PositionedElement::Image { rect, .. } if transform.f + rect.y > page.height * 0.85 => {
+                footer_images.push((transform.e + rect.x, rect.width));
+            }
+            oxml_layout::PositionedElement::Text(run) if transform.f + run.origin.y > page.height * 0.85 && run.field_kind.is_some() => {
+                page_number_x = Some(transform.e + run.origin.x);
+            }
+            _ => {}
+        });
+        let [(mark_x, mark_w)] = footer_images[..] else { panic!("expected one footer picture, got {footer_images:?}") };
+        assert!((mark_w - 20.0 * 72.0 / 25.4).abs() < 0.5, "20 mm wide: {mark_w}");
+        let right_margin_x = page.width - t::MARGINS_MM[1] * 72.0 / 25.4;
+        assert!((mark_x + mark_w - right_margin_x).abs() < 1.0, "flush with the right margin: {mark_x} + {mark_w} vs {right_margin_x}");
+        let page_number_x = page_number_x.expect("page number field in the footer");
+        assert!(page_number_x < mark_x - FOOTER_MARK_GAP_MM * 72.0 / 25.4 * 0.9, "page number sits left of the mark: {page_number_x} vs {mark_x}");
+    }
+
+    #[test]
+    fn a_broken_watermark_image_warns_but_never_blocks_the_document() {
+        let mut ir = sample_test();
+        ir.watermark = Some(serde_json::from_str(r#"{ "image": { "data": "not-base64!", "mime": "image/png" } }"#).unwrap());
+        let (doc, report) = render(&ir).expect("render");
+        assert_eq!(report.warnings.len(), 1, "{:?}", report.warnings);
+        assert!(report.warnings[0].starts_with("watermark:"));
+        assert_eq!(doc.layout().expect("layout").layout.pages.len(), 1);
     }
 
     #[test]
