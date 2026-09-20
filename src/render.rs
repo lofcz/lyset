@@ -1901,6 +1901,59 @@ mod tests {
     }
 
     #[test]
+    fn mathml_and_latex_fractions_remain_editable_after_docx_round_trip() {
+        let ir = parse(
+            r#"{
+            "version": 1, "locale": "cs", "kind": "lesson", "title": "Math",
+            "blocks": [{ "kind": "paragraph", "content": [
+                { "kind": "math", "tex": "\\frac{3}{10}" },
+                { "kind": "text", "text": " + " },
+                { "kind": "math", "tex": "\\frac{4}{10}", "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mfrac><mn>4</mn><mn>10</mn></mfrac></math>" },
+                { "kind": "text", "text": " = " },
+                { "kind": "math", "tex": "\\frac{7}{10}", "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mfrac><mn>7</mn><mn>10</mn></mfrac></math>" }
+            ] }]
+        }"#,
+        );
+        let (mut doc, report) = render(&ir).expect("render");
+        assert!(report.warnings.is_empty(), "{:?}", report.warnings);
+        let reopened =
+            Document::from_bytes(&doc.to_bytes().expect("DOCX bytes")).expect("reopen DOCX");
+        let equation_xml = |document: &Document| -> Vec<String> {
+            document
+                .paragraphs()
+                .iter()
+                .flat_map(|p| {
+                    p.equations()
+                        .map(|eq| {
+                            let xml = String::from_utf8(eq.to_xml().expect("OMML")).unwrap();
+                            // Reopening retains additional inherited namespace declarations
+                            // on oMath. Compare the complete equation body instead.
+                            xml.split_once('>').expect("oMath root").1.to_owned()
+                        })
+                        .collect::<Vec<_>>()
+                })
+                .collect()
+        };
+        let original = equation_xml(&doc);
+        assert_eq!(original.len(), 3);
+        assert_eq!(equation_xml(&reopened), original);
+        for xml in original {
+            assert!(xml.contains("<m:f>"), "native fraction missing: {xml}");
+            assert!(xml.contains("<m:num>") && xml.contains("<m:den>"));
+        }
+        assert_eq!(
+            reopened
+                .layout()
+                .expect("reopened layout")
+                .layout
+                .pages
+                .len(),
+            1
+        );
+        assert!(reopened.to_pdf().expect("PDF").starts_with(b"%PDF"));
+    }
+
+    #[test]
     fn short_tasks_are_chained_with_keep_with_next_but_release_the_last_line() {
         let (doc, _) = render(&sample_test()).expect("render");
         let keeps: Vec<(String, bool)> = doc.paragraphs().iter().map(|p| (p.text(), p.keep_with_next_value().unwrap_or(false))).collect();
