@@ -94,6 +94,16 @@ fn run_render(args: &[String]) -> Result<ExitCode, String> {
     let (mut doc, report) = render::render(&ir)?;
     let mut warnings = report.warnings;
 
+    // Check the same native layout used by PDF before writing either format.
+    // A valid OMML tree can still contain an unsupported construct or glyph.
+    let layout = doc.layout().map_err(|e| format!("math layout preflight: {e}"))?;
+    let math_errors: Vec<_> = layout.layout.diagnostics.iter()
+        .filter(|d| d.message.contains("OfficeMath"))
+        .map(|d| d.message.as_str()).collect();
+    if !math_errors.is_empty() {
+        return Err(format!("cannot export document with unrenderable math: {}", math_errors.join("; ")));
+    }
+
     if let Some(path) = &args.docx {
         ensure_parent(path)?;
         doc.save(path).map_err(|e| format!("save docx: {e}"))?;

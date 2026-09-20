@@ -35,7 +35,7 @@ pub fn render(ir: &PrintDocument) -> Result<(Document, RenderReport), String> {
         return Err(format!("unsupported IR version {}", ir.version));
     }
     let mut doc = Document::new();
-    let mut ctx = Ctx::new(ir);
+    let mut ctx = Ctx::new(ir)?;
 
     // Page geometry.
     let (page_w, page_h) = match ir.page.as_ref().and_then(|p| p.orientation) {
@@ -58,6 +58,9 @@ pub fn render(ir: &PrintDocument) -> Result<(Document, RenderReport), String> {
 
     install_header_footer(&mut doc, &mut ctx, ir);
 
+    if !ctx.math_errors.is_empty() {
+        return Err(format!("cannot export document with invalid or lossy math: {}", ctx.math_errors.join("; ")));
+    }
     Ok((doc, RenderReport { warnings: ctx.warnings }))
 }
 
@@ -79,6 +82,7 @@ struct Ctx {
     images: HashMap<u64, EmbeddedImage>,
     links: HashMap<String, String>,
     warnings: Vec<String>,
+    math_errors: Vec<String>,
     image_seq: usize,
     /// Keep-with-next policy for paragraphs created by the block being
     /// rendered (small tasks stay on one page as a chain).
@@ -96,22 +100,29 @@ enum Keep {
 }
 
 impl Ctx {
-    fn new(ir: &PrintDocument) -> Self {
-        let accent = ir
-            .theme
-            .as_ref()
-            .and_then(|th| th.accent.as_deref())
-            .map(|hex| hex.trim_start_matches('#').to_uppercase())
-            .unwrap_or_else(|| t::DEFAULT_ACCENT.to_string());
-        Ctx {
+    fn new(ir: &PrintDocument) -> Result<Self, String> {
+        let accent = ir.theme.as_ref().and_then(|th| th.accent.as_deref())
+            .unwrap_or(t::DEFAULT_ACCENT).trim();
+        let accent = accent.strip_prefix('#').unwrap_or(accent);
+        if !matches!(accent.len(), 3 | 6) || !accent.bytes().all(|b| b.is_ascii_hexdigit()) {
+            return Err("theme accent must be a 3- or 6-digit hexadecimal colour".to_string());
+        }
+        // OOXML requires six hex digits, even when the input uses CSS shorthand.
+        let accent = if accent.len() == 3 {
+            accent.chars().flat_map(|c| [c, c]).collect::<String>()
+        } else {
+            accent.to_string()
+        }.to_uppercase();
+        Ok(Ctx {
             accent,
             content_w: 0.0,
             images: HashMap::new(),
             links: HashMap::new(),
             warnings: Vec::new(),
+            math_errors: Vec::new(),
             image_seq: 0,
             keep: Keep::Off,
-        }
+        })
     }
 
     fn tone_color(&self, tone: Tone) -> String {
@@ -223,6 +234,13 @@ fn collect_assets(doc: &mut Document, ctx: &mut Ctx, blocks: &[Block]) {
                 for row in rows {
                     for cell in row {
                         collect_assets(doc, ctx, &cell.blocks);
+                    }
+                }
+            }
+            Block::Cards { items, .. } => {
+                for item in items {
+                    for part in &item.parts {
+                        collect_assets(doc, ctx, &part.blocks);
                     }
                 }
             }
@@ -454,7 +472,7 @@ fn write_inlines_inner(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline],
                     run.set_subscript();
                 }
             }
-            Inline::Math { tex, mathml } => write_math(ctx, p, tex, mathml.as_deref(), base),
+            Inline::Math { tex, mathml } => write_math(ctx, p, tex, mathml.as_deref()),
             Inline::Break => p.add_line_break(),
             Inline::Blank { width, answer, reveal } => {
                 let revealed = reveal.unwrap_or(false);
@@ -492,43 +510,27 @@ fn write_inlines_inner(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline],
     }
 }
 
-/// Insert an Office Math object. Prefer presentation MathML (`mathml`);
-/// `rdocx` converts that to OMML. IR with only `tex` uses rdocx's LaTeX
-/// subset, with diagnostics surfaced as warnings.
-fn write_math(
-    ctx: &mut Ctx,
-    p: &mut Paragraph<'_>,
-    tex: &str,
-    mathml: Option<&str>,
-    base: &RunStyle,
-) {
+/// Insert an editable Office Math object. Any lossy conversion prevents export.
+fn write_math(ctx: &mut Ctx, p: &mut Paragraph<'_>, tex: &str, mathml: Option<&str>) {
     let converted = match mathml {
         Some(mathml) => equation_from_mathml(mathml),
         None => equation_from_latex(tex),
     };
     match converted {
         Ok(result) => {
-            for d in &result.diagnostics {
-                ctx.warnings
-                    .push(format!("math: `{tex}` at {}: {}", d.path, d.message));
+            if !result.diagnostics.is_empty() {
+                for d in &result.diagnostics {
+                    ctx.math_errors.push(format!("`{tex}` at {}: {}", d.path, d.message));
+                }
+                return;
             }
             let om = OfficeMath::inline(result.value.expressions);
             if let Err(e) = p.add_equation(om) {
-                ctx.warnings.push(format!("math: could not insert `{tex}`: {e}"));
-                fallback_math(p, tex, base);
+                ctx.math_errors.push(format!("could not insert `{tex}`: {e}"));
             }
         }
-        Err(e) => {
-            ctx.warnings.push(format!("math: unsupported formula `{tex}`: {e}"));
-            fallback_math(p, tex, base);
-        }
+        Err(e) => ctx.math_errors.push(format!("unsupported formula `{tex}`: {e}")),
     }
-}
-
-/// Plain-text stand-in for a formula the converter rejected outright.
-fn fallback_math(p: &mut Paragraph<'_>, tex: &str, base: &RunStyle) {
-    let style = base.clone().italic();
-    styled_run(p, tex.trim(), &style);
 }
 
 /// Real `<w:tab/>` (a literal tab inside `<w:t>` renders as a missing glyph).
@@ -1088,7 +1090,7 @@ fn render_table<S: Sink>(
     style: TableStyle,
     dense: bool,
 ) {
-    let cols = rows.iter().map(|r| r.iter().map(|c| c.col_span.unwrap_or(1) as usize).sum::<usize>()).max().unwrap_or(0);
+    let cols = rows.iter().map(|r| r.iter().map(|c| c.col_span.unwrap_or(1).max(1) as usize).sum::<usize>()).max().unwrap_or(0);
     if cols == 0 || rows.is_empty() {
         return;
     }
@@ -1121,14 +1123,17 @@ fn render_table<S: Sink>(
             row.set_cant_split();
         }
         let mut col = 0usize;
-        for cell_ir in row_cells {
+        for (cell_index, cell_ir) in row_cells.iter().enumerate() {
             let span = cell_ir.col_span.unwrap_or(1).max(1) as usize;
-            let Some(mut cell) = table.cell(ri, col) else { break };
-            let cell_w: f64 = widths[col..(col + span).min(cols)].iter().sum();
-            cell.set_width(Length::mm(cell_w));
+            // A grid span consumes physical cells. Later cells are indexed by
+            // their position in the row, while widths use logical grid columns.
             if span > 1 {
-                cell.set_grid_span(span as u32);
+                table.set_cell_grid_span_checked(ri, cell_index, Some(span as u32))
+                    .expect("fresh table has enough empty cells for the computed spans");
             }
+            let Some(mut cell) = table.cell(ri, cell_index) else { break };
+            let cell_w: f64 = widths[col..col + span].iter().sum();
+            cell.set_width(Length::mm(cell_w));
             if is_header || cell_ir.shade.unwrap_or(false) {
                 cell.set_shading(t::SOFT);
             }
@@ -1880,6 +1885,75 @@ mod tests {
         )
     }
 
+
+    #[test]
+    fn theme_colours_expand_shorthand_and_reject_invalid_ooxml_values() {
+        for (input, expected) in [("#abc", "AABBCC"), ("abc", "AABBCC"), (" #12aB34 ", "12AB34")] {
+            let mut ir = sample_test();
+            ir.theme = Some(crate::ir::Theme { accent: Some(input.to_string()) });
+            assert_eq!(Ctx::new(&ir).unwrap().accent, expected);
+            let (mut doc, _) = render(&ir).unwrap();
+            Document::from_bytes(&doc.to_bytes().unwrap()).unwrap();
+        }
+        for input in ["", "##123456", "red", "12345", "12345678", "GGGGGG", "🟦"] {
+            let mut ir = sample_test();
+            ir.theme = Some(crate::ir::Theme { accent: Some(input.to_string()) });
+            let Err(error) = render(&ir) else { panic!("accepted invalid colour {input}"); };
+            assert!(error.contains("theme accent"), "{error}");
+        }
+    }
+
+    #[test]
+    fn card_assets_are_collected_through_nested_blocks() {
+        let ir = parse(&serde_json::json!({
+            "version": 1, "locale": "en", "kind": "activity", "title": "Cards",
+            "blocks": [{ "kind": "cards", "columns": 1, "items": [{ "parts": [{ "blocks": [
+                { "kind": "panel", "variant": "plain", "blocks": [
+                    { "kind": "image", "image": { "data": PIXEL_PNG_B64, "mime": "image/png" } }
+                ] },
+                { "kind": "paragraph", "content": [{ "kind": "link", "href": "https://example.com", "text": "Link" }] }
+            ] }] }] }]
+        }).to_string());
+        let (mut doc, report) = render(&ir).unwrap();
+        assert!(report.warnings.is_empty());
+        assert_eq!(doc.images().len(), 1);
+        let reopened = Document::from_bytes(&doc.to_bytes().unwrap()).unwrap();
+        assert_eq!(reopened.images().len(), 1);
+        let tables = reopened.tables();
+        let cell = tables[0].cell(0, 0).unwrap();
+        let links: Vec<_> = cell.paragraphs().flat_map(|p| {
+            p.hyperlink_spans().into_iter()
+                .filter_map(|(_, _, id)| id.and_then(|id| reopened.hyperlink_url(id)))
+                .collect::<Vec<_>>()
+        }).collect();
+        assert_eq!(links, ["https://example.com"]);
+    }
+
+    #[test]
+    fn table_spans_consume_covered_cells_without_losing_following_content() {
+        for spans in [[2, 1], [1, 2], [2, 2], [0, 1]] {
+            let row: Vec<_> = spans.iter().enumerate().map(|(i, span)| serde_json::json!({
+                "colSpan": span, "blocks": [{ "kind": "paragraph", "content": [{ "kind": "text", "text": format!("cell {i}") }] }]
+            })).collect();
+            let ir = parse(&serde_json::json!({
+                "version": 1, "locale": "en", "kind": "test", "title": "Spans",
+                "blocks": [{ "kind": "table", "rows": [row] }]
+            }).to_string());
+            let (mut doc, _) = render(&ir).unwrap();
+            let reopened = Document::from_bytes(&doc.to_bytes().unwrap()).unwrap();
+            let tables = reopened.tables();
+            let table = &tables[0];
+            let row = table.row(0).unwrap();
+            assert_eq!(row.cell_count(), 2, "spans {spans:?}");
+            assert_eq!(table.column_count(), spans.iter().map(|s| (*s).max(1) as usize).sum::<usize>());
+            for (i, span) in spans.iter().enumerate() {
+                let cell = row.cell(i).unwrap();
+                assert_eq!(cell.grid_span().unwrap_or(1), (*span).max(1));
+                assert!(cell.text().contains(&format!("cell {i}")));
+            }
+        }
+    }
+
     #[test]
     fn renders_a_test_sheet_onto_one_page() {
         let (doc, report) = render(&sample_test()).expect("render");
@@ -1951,6 +2025,25 @@ mod tests {
             1
         );
         assert!(reopened.to_pdf().expect("PDF").starts_with(b"%PDF"));
+    }
+
+    #[test]
+    fn invalid_or_lossy_equations_fail_export_instead_of_becoming_plain_text() {
+        for (tex, mathml) in [
+            (r"\frac{1}{", None),
+            (r"\unknowncommand{x}", None),
+            (r"\boxed{x}", Some(r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><menclose notation="box"><mi>x</mi></menclose></math>"#)),
+            (r"\\frac{5}{6}", Some(r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mspace linebreak="newline"/><mi>f</mi><mi>r</mi><mi>a</mi><mi>c</mi><mn>56</mn></math>"#)),
+        ] {
+            let mut inline = serde_json::json!({ "kind": "math", "tex": tex });
+            if let Some(mathml) = mathml { inline["mathml"] = mathml.into(); }
+            let ir = parse(&serde_json::json!({
+                "version": 1, "locale": "en", "kind": "test", "title": "Invalid math",
+                "blocks": [{ "kind": "paragraph", "content": [inline] }],
+            }).to_string());
+            let Err(error) = render(&ir) else { panic!("silently exported {tex}"); };
+            assert!(error.contains("invalid or lossy math"), "{error}");
+        }
     }
 
     #[test]
