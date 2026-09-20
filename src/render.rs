@@ -2032,7 +2032,7 @@ mod tests {
         for (tex, mathml) in [
             (r"\frac{1}{", None),
             (r"\unknowncommand{x}", None),
-            (r"\boxed{x}", Some(r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><menclose notation="box"><mi>x</mi></menclose></math>"#)),
+            (r"\boxed{x}", Some(r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><menclose notation="circle"><mi>x</mi></menclose></math>"#)),
             (r"\\frac{5}{6}", Some(r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mspace linebreak="newline"/><mi>f</mi><mi>r</mi><mi>a</mi><mi>c</mi><mn>56</mn></math>"#)),
         ] {
             let mut inline = serde_json::json!({ "kind": "math", "tex": tex });
@@ -2161,4 +2161,35 @@ mod tests {
             }
         }
     }
+    #[test]
+    fn boxed_answers_remain_editable_after_docx_reopen() {
+        let ir = parse(&serde_json::json!({
+            "version": 1, "locale": "en", "kind": "test", "title": "Editable boxes",
+            "blocks": [{ "kind": "paragraph", "content": [
+                { "kind": "math", "tex": "x", "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mfrac><menclose notation=\"box\"><mspace width=\"1.2em\"/></menclose><mn>15</mn></mfrac></math>" },
+                { "kind": "text", "text": " = " },
+                { "kind": "math", "tex": "\\frac{2}{3}" }
+            ] }]
+        }).to_string());
+        let (mut doc, report) = render(&ir).unwrap();
+        assert!(report.warnings.is_empty());
+        let reopened = Document::from_bytes(&doc.to_bytes().unwrap()).unwrap();
+        assert!(reopened.images().is_empty());
+        let equations: Vec<_> = reopened
+            .paragraphs()
+            .iter()
+            .flat_map(|p| {
+                p.equations()
+                    .map(|eq| String::from_utf8(eq.to_xml().unwrap()).unwrap())
+                    .collect::<Vec<_>>()
+            })
+            .collect();
+        assert_eq!(equations.len(), 2);
+        assert!(equations[0].contains("m:borderBox"));
+        assert!(!equations[0].contains("underline"));
+        let layout = reopened.layout().unwrap();
+        assert!(layout.layout.diagnostics.is_empty());
+        assert!(reopened.to_pdf().unwrap().starts_with(b"%PDF"));
+    }
+
 }
