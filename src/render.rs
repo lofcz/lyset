@@ -11,6 +11,7 @@ use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
 
 use base64::Engine;
+use unicode_segmentation::UnicodeSegmentation;
 use rdocx::{
     Alignment, BorderStyle, Cell, Document, HdrFtrType, Length, OfficeMath, Paragraph, Table,
     TabAlignment, UnderlineStyle, VerticalAlignment, equation_from_latex, equation_from_mathml,
@@ -35,6 +36,7 @@ pub fn render(ir: &PrintDocument) -> Result<(Document, RenderReport), String> {
         return Err(format!("unsupported IR version {}", ir.version));
     }
     let mut doc = Document::new();
+    embed_emoji_font(&mut doc)?;
     let mut ctx = Ctx::new(ir)?;
 
     // Page geometry.
@@ -59,6 +61,20 @@ pub fn render(ir: &PrintDocument) -> Result<(Document, RenderReport), String> {
     install_header_footer(&mut doc, &mut ctx, ir);
 
     Ok((doc, RenderReport { warnings: ctx.warnings }))
+}
+
+/// Production has no system fonts. Supply outline emoji as a document font
+/// so coverage fallback works for both PDF and a reopened DOCX. Color bitmap
+/// fonts cannot supply the outlines needed by the native PDF renderer.
+fn embed_emoji_font(doc: &mut Document) -> Result<(), String> {
+    doc.set_font(rdocx::FontDefinition::new("Noto Emoji"))
+        .map_err(|e| format!("register emoji font: {e}"))?;
+    doc.embed_font("Noto Emoji", rdocx::EmbeddedFont::new(
+        rdocx::EmbeddedFontKind::Regular,
+        EMOJI_FONT.to_vec(),
+        "{B0E6E576-8D74-4C44-97D7-EF7CD297A018}",
+        rdocx::FontEmbeddingLicense::new(true, "SIL Open Font License 1.1 (Noto Emoji)"),
+    )).map_err(|e| format!("embed emoji font: {e}"))
 }
 
 // ---------------------------------------------------------------------------
@@ -408,18 +424,45 @@ impl RunStyle {
     }
 }
 
-fn styled_run<'p>(p: &'p mut Paragraph<'_>, text: &str, style: &RunStyle) -> rdocx::Run<'p> {
-    let mut run = p.add_run(text);
-    run.set_font(t::FONT_BODY);
-    run.set_size(style.size);
-    run.set_color(&style.color);
-    if style.bold {
-        run.set_bold(true);
+const EMOJI_FONT: &[u8] = include_bytes!("../fonts/NotoEmoji-Regular.ttf");
+
+/// Keep joined emoji, flags and variation selectors in one font/shaping run.
+/// The native renderer otherwise chooses one fallback for the entire run,
+/// including Latin letters the emoji font cannot draw.
+fn text_font_segments(text: &str) -> Vec<(&str, bool)> {
+    static FACE: std::sync::OnceLock<ttf_parser::Face<'static>> = std::sync::OnceLock::new();
+    let face = FACE.get_or_init(|| ttf_parser::Face::parse(EMOJI_FONT, 0).expect("bundled emoji font"));
+    let mut segments: Vec<(&str, bool)> = Vec::new();
+    let mut start = 0;
+    for (offset, grapheme) in text.grapheme_indices(true) {
+        let emoji = grapheme.chars().any(|ch| ch > '\u{7f}' && face.glyph_index(ch).is_some());
+        if let Some((segment, previous)) = segments.last_mut() {
+            if *previous == emoji {
+                *segment = &text[start..offset + grapheme.len()];
+                continue;
+            }
+        }
+        start = offset;
+        segments.push((grapheme, emoji));
     }
-    if style.italic {
-        run.set_italic(true);
+    if segments.is_empty() { segments.push((text, false)); }
+    segments
+}
+
+fn styled_runs(p: &mut Paragraph<'_>, text: &str, style: &RunStyle, mut decorate: impl FnMut(&mut rdocx::Run<'_>, bool)) {
+    for (segment, emoji) in text_font_segments(text) {
+        let mut run = p.add_run(segment);
+        run.set_font(if emoji { "Noto Emoji" } else { t::FONT_BODY });
+        run.set_size(style.size);
+        run.set_color(&style.color);
+        if style.bold { run.set_bold(true); }
+        if style.italic { run.set_italic(true); }
+        decorate(&mut run, emoji);
     }
-    run
+}
+
+fn styled_run(p: &mut Paragraph<'_>, text: &str, style: &RunStyle) {
+    styled_runs(p, text, style, |_, _| {});
 }
 
 fn write_inlines(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline], base: &RunStyle) {
@@ -449,23 +492,24 @@ fn write_inlines_inner(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline],
                         style.color = ctx.tone_color(*tone);
                     }
                 }
-                let mut run = styled_run(p, text, &style);
-                if code.unwrap_or(false) {
-                    run.set_font(t::FONT_MONO);
-                    run.set_size(style.size - 1.0);
-                }
-                if underline.unwrap_or(false) {
-                    run.set_underline(true);
-                }
-                if strike.unwrap_or(false) {
-                    run.set_strike(true);
-                }
-                if sup.unwrap_or(false) {
-                    run.set_superscript();
-                }
-                if sub.unwrap_or(false) {
-                    run.set_subscript();
-                }
+                styled_runs(p, text, &style, |run, emoji| {
+                    if code.unwrap_or(false) {
+                        if !emoji { run.set_font(t::FONT_MONO); }
+                        run.set_size(style.size - 1.0);
+                    }
+                    if underline.unwrap_or(false) {
+                        run.set_underline(true);
+                    }
+                    if strike.unwrap_or(false) {
+                        run.set_strike(true);
+                    }
+                    if sup.unwrap_or(false) {
+                        run.set_superscript();
+                    }
+                    if sub.unwrap_or(false) {
+                        run.set_subscript();
+                    }
+                });
             }
             Inline::Math { tex, mathml } => write_math(ctx, p, tex, mathml.as_deref(), base),
             Inline::Break => p.add_line_break(),
@@ -474,8 +518,7 @@ fn write_inlines_inner(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline],
                 match (revealed, answer.as_deref()) {
                     (true, Some(ans)) if !ans.is_empty() => {
                         let style = base.clone().bold().color(t::ANSWER);
-                        let mut run = styled_run(p, ans, &style);
-                        run.set_underline_style(UnderlineStyle::Single);
+                        styled_runs(p, ans, &style, |run, _| { run.set_underline_style(UnderlineStyle::Single); });
                     }
                     _ => {
                         let line = "_".repeat((*width).max(3) as usize);
@@ -489,11 +532,13 @@ fn write_inlines_inner(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline],
                 let label = if text.is_empty() { href } else { text };
                 match rel {
                     Some(rel_id) => {
-                        let mut run = p.add_hyperlink(label, &rel_id);
-                        run.set_font(t::FONT_BODY);
-                        run.set_size(base.size);
-                        run.set_color(&ctx.accent);
-                        run.set_underline(true);
+                        for (segment, emoji) in text_font_segments(label) {
+                            let mut run = p.add_hyperlink(segment, &rel_id);
+                            run.set_font(if emoji { "Noto Emoji" } else { t::FONT_BODY });
+                            run.set_size(base.size);
+                            run.set_color(&ctx.accent);
+                            run.set_underline(true);
+                        }
                     }
                     None => {
                         let style = base.clone().color(&ctx.accent);
@@ -531,8 +576,7 @@ fn write_math(ctx: &mut Ctx, p: &mut Paragraph<'_>, tex: &str, mathml: Option<&s
 
 /// Real `<w:tab/>` (a literal tab inside `<w:t>` renders as a missing glyph).
 fn tab(p: &mut Paragraph<'_>, style: &RunStyle) {
-    let mut run = styled_run(p, "", style);
-    run.add_tab();
+    styled_runs(p, "", style, |run, _| { run.add_tab(); });
 }
 
 fn set_align(p: &mut Paragraph<'_>, align: Option<Align>) {
@@ -922,8 +966,7 @@ fn render_heading<S: Sink>(
             p.set_indent_left(Length::mm(frame.indent));
         }
         let style = RunStyle::body().with_size(t::PT_KICKER).bold().color(t::MUTED);
-        let mut run = styled_run(&mut p, &kicker.to_uppercase(), &style);
-        run.set_character_spacing(Length::pt(0.8));
+        styled_runs(&mut p, &kicker.to_uppercase(), &style, |run, _| { run.set_character_spacing(Length::pt(0.8)); });
     }
 
     let mut p = sink.para();
@@ -1243,8 +1286,7 @@ fn render_panel<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, variant: Pa
                     spacing(&mut p, pad_v, 1.5);
                     p.set_keep_with_next(true);
                     let style = RunStyle::body().with_size(t::PT_LABEL).bold().color(colors.bar);
-                    let mut run = styled_run(&mut p, &label.to_uppercase(), &style);
-                    run.set_character_spacing(Length::pt(0.7));
+                    styled_runs(&mut p, &label.to_uppercase(), &style, |run, _| { run.set_character_spacing(Length::pt(0.7)); });
                 }
             }
             render_blocks(&mut cell, ctx, &inner, unit);
@@ -1385,8 +1427,7 @@ fn render_facts<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, rows: &[cra
             let mut p = cell.paragraph_mut(0).expect("fresh cell has a paragraph");
             spacing(&mut p, 1.0, 0.0);
             let style = RunStyle::body().with_size(t::PT_LABEL).bold().color(t::MUTED);
-            let mut run = styled_run(&mut p, &row.label.to_uppercase(), &style);
-            run.set_character_spacing(Length::pt(0.5));
+            styled_runs(&mut p, &row.label.to_uppercase(), &style, |run, _| { run.set_character_spacing(Length::pt(0.5)); });
         }
         if let Some(mut cell) = table.cell(ri, 1) {
             cell.set_width(Length::mm(value_w));
@@ -1689,7 +1730,10 @@ fn rpr(size_half_pt: u32, color: &str, bold: bool) -> String {
 }
 
 fn text_run(text: &str, rpr_xml: &str) -> String {
-    format!("<w:r>{rpr_xml}<w:t xml:space=\"preserve\">{}</w:t></w:r>", xml_escape(text))
+    text_font_segments(text).into_iter().map(|(segment, emoji)| {
+        let properties = if emoji { rpr_xml.replace(t::FONT_BODY, "Noto Emoji") } else { rpr_xml.to_string() };
+        format!("<w:r>{properties}<w:t xml:space=\"preserve\">{}</w:t></w:r>", xml_escape(segment))
+    }).collect()
 }
 
 fn field_run(instr: &str, placeholder: &str, rpr_xml: &str) -> String {
@@ -1852,6 +1896,36 @@ fn footer_mark(ctx: &mut Ctx, mark: &crate::ir::Watermark) -> Option<FooterMark>
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn emoji_cards_have_real_glyphs_after_docx_round_trip() {
+        let ir = parse(&serde_json::json!({
+            "version": 1, "locale": "sk", "kind": "print", "title": "Emoji",
+            "blocks": [{ "kind": "cards", "columns": 3, "heightMm": 52, "items": [
+                { "parts": [{ "blocks": [{ "kind": "paragraph", "content": [
+                    { "kind": "text", "text": "Slovenský jazyk 📚 📖 ✍️ 📝" },
+                    { "kind": "text", "text": "🇸🇰 🇬🇧 🗺️ 🧭 👩‍🏫 👍🏽 1️⃣", "bold": true }
+                ] }] }] }
+            ] }]
+        }).to_string());
+        let (mut doc, _) = render(&ir).unwrap();
+        let reopened = Document::from_bytes(&doc.to_bytes().unwrap()).unwrap();
+        for document in [&doc, &reopened] {
+            let result = document.layout().unwrap();
+            assert!(result.layout.fonts.iter().any(|font| font.family.replace(' ', "") == "NotoEmoji"),
+                "fonts: {:?}", result.layout.fonts.iter().map(|font| &font.family).collect::<Vec<_>>());
+            let mut runs = 0;
+            for page in &result.layout.pages {
+                oxml_layout::walk(&page.elements, &mut |element, _| {
+                    if let oxml_layout::PositionedElement::Text(run) = element {
+                        runs += 1;
+                        assert!(!run.glyph_ids.contains(&0), "missing glyph in {:?}", run.text);
+                    }
+                });
+            }
+            assert!(runs > 0);
+        }
+    }
 
     fn parse(json: &str) -> PrintDocument {
         serde_json::from_str(json).expect("valid IR")

@@ -13,10 +13,12 @@ oxml-media = { git = "https://github.com/lofcz/rdocx", rev = "0fb04d02ce78549447
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 base64 = "0.22"
+ttf-parser = "0.25.1"
+unicode-segmentation = "1.12"
 
 [dev-dependencies]
 # Page-frame inspection in render tests.
-oxml-layout = { git = "https://github.com/lofcz/rdocx", rev = "0fb04d02ce785494476e4dd348efaf41e380c210" }
+oxml-layout = { git = "https://github.com/lofcz/rdocx", rev = "0fb04d02ce785494476e4dd348efaf41e380c210", default-features = false }
 
 [profile.release]
 opt-level = 3

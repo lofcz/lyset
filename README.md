@@ -12,6 +12,13 @@ rdocx's subset.
 editable boxed math and correct PDF text extraction after ligatures. System
 fonts are disabled for deterministic output. No sibling checkout is required.
 
+Noto Emoji is embedded in generated documents for deterministic monochrome
+emoji fallback, including flags and joined sequences. The outline font works
+in both PDF and DOCX without installing fonts on the server. Its SIL Open Font
+License is included in `fonts/OFL-NotoEmoji.txt`. `fonts/NotoEmoji-Regular.ttf`
+is the weight-400 static instance of Google Fonts' `ofl/notoemoji/NotoEmoji[wght].ttf`,
+generated with fontTools `instantiateVariableFont(font, {"wght": 400})`.
+
 Unsupported or malformed formulas are preserved as literal text and reported
 in `warnings`. They do not abort the rest of the export.
 
