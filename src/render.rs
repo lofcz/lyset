@@ -58,9 +58,6 @@ pub fn render(ir: &PrintDocument) -> Result<(Document, RenderReport), String> {
 
     install_header_footer(&mut doc, &mut ctx, ir);
 
-    if !ctx.math_errors.is_empty() {
-        return Err(format!("cannot export document with invalid or lossy math: {}", ctx.math_errors.join("; ")));
-    }
     Ok((doc, RenderReport { warnings: ctx.warnings }))
 }
 
@@ -82,7 +79,6 @@ struct Ctx {
     images: HashMap<u64, EmbeddedImage>,
     links: HashMap<String, String>,
     warnings: Vec<String>,
-    math_errors: Vec<String>,
     image_seq: usize,
     /// Keep-with-next policy for paragraphs created by the block being
     /// rendered (small tasks stay on one page as a chain).
@@ -119,7 +115,6 @@ impl Ctx {
             images: HashMap::new(),
             links: HashMap::new(),
             warnings: Vec::new(),
-            math_errors: Vec::new(),
             image_seq: 0,
             keep: Keep::Off,
         })
@@ -472,7 +467,7 @@ fn write_inlines_inner(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline],
                     run.set_subscript();
                 }
             }
-            Inline::Math { tex, mathml } => write_math(ctx, p, tex, mathml.as_deref()),
+            Inline::Math { tex, mathml } => write_math(ctx, p, tex, mathml.as_deref(), base),
             Inline::Break => p.add_line_break(),
             Inline::Blank { width, answer, reveal } => {
                 let revealed = reveal.unwrap_or(false);
@@ -510,27 +505,28 @@ fn write_inlines_inner(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline],
     }
 }
 
-/// Insert an editable Office Math object. Any lossy conversion prevents export.
-fn write_math(ctx: &mut Ctx, p: &mut Paragraph<'_>, tex: &str, mathml: Option<&str>) {
+/// Keep supported equations editable. Preserve unsupported expressions as text
+/// rather than dropping content or failing the rest of the document.
+fn write_math(ctx: &mut Ctx, p: &mut Paragraph<'_>, tex: &str, mathml: Option<&str>, style: &RunStyle) {
     let converted = match mathml {
         Some(mathml) => equation_from_mathml(mathml),
         None => equation_from_latex(tex),
     };
-    match converted {
-        Ok(result) => {
-            if !result.diagnostics.is_empty() {
-                for d in &result.diagnostics {
-                    ctx.math_errors.push(format!("`{tex}` at {}: {}", d.path, d.message));
-                }
-                return;
-            }
+    let reason = match converted {
+        Ok(result) if result.diagnostics.is_empty() => {
             let om = OfficeMath::inline(result.value.expressions);
-            if let Err(e) = p.add_equation(om) {
-                ctx.math_errors.push(format!("could not insert `{tex}`: {e}"));
+            match p.add_equation(om) {
+                Ok(_) => return,
+                Err(e) => format!("could not insert equation: {e}"),
             }
         }
-        Err(e) => ctx.math_errors.push(format!("unsupported formula `{tex}`: {e}")),
-    }
+        Ok(result) => result.diagnostics.iter()
+            .map(|d| format!("{}: {}", d.path, d.message))
+            .collect::<Vec<_>>().join("; "),
+        Err(e) => format!("unsupported formula: {e}"),
+    };
+    ctx.warnings.push(format!("Formula `{tex}` exported as plain text: {reason}"));
+    styled_run(p, tex, style);
 }
 
 /// Real `<w:tab/>` (a literal tab inside `<w:t>` renders as a missing glyph).
@@ -2028,10 +2024,12 @@ mod tests {
     }
 
     #[test]
-    fn invalid_or_lossy_equations_fail_export_instead_of_becoming_plain_text() {
+    fn invalid_or_lossy_equations_preserve_text_and_allow_docx_and_pdf_export() {
         for (tex, mathml) in [
             (r"\frac{1}{", None),
             (r"\unknowncommand{x}", None),
+            (r"\Uzivatel", None),
+            (r"x", Some("<math><mfrac>")),
             (r"\boxed{x}", Some(r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><menclose notation="circle"><mi>x</mi></menclose></math>"#)),
             (r"\\frac{5}{6}", Some(r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mspace linebreak="newline"/><mi>f</mi><mi>r</mi><mi>a</mi><mi>c</mi><mn>56</mn></math>"#)),
         ] {
@@ -2039,10 +2037,15 @@ mod tests {
             if let Some(mathml) = mathml { inline["mathml"] = mathml.into(); }
             let ir = parse(&serde_json::json!({
                 "version": 1, "locale": "en", "kind": "test", "title": "Invalid math",
-                "blocks": [{ "kind": "paragraph", "content": [inline] }],
+                "blocks": [{ "kind": "paragraph", "content": [{ "kind": "text", "text": "Before " }, inline, { "kind": "math", "tex": "\\frac{1}{2}" }, { "kind": "text", "text": " after" }] }],
             }).to_string());
-            let Err(error) = render(&ir) else { panic!("silently exported {tex}"); };
-            assert!(error.contains("invalid or lossy math"), "{error}");
+            let (mut doc, report) = render(&ir).expect("fallback render");
+            assert!(!report.warnings.is_empty(), "missing warning for {tex}");
+            let reopened = Document::from_bytes(&doc.to_bytes().expect("DOCX")).expect("reopen");
+            let paragraphs = reopened.paragraphs();
+            assert!(paragraphs.iter().any(|p| p.text().contains(&format!("Before {tex}")) && p.text().contains(" after")));
+            assert_eq!(paragraphs.iter().map(|p| p.equations().count()).sum::<usize>(), 1);
+            assert!(reopened.to_pdf().expect("PDF").starts_with(b"%PDF"));
         }
     }
 

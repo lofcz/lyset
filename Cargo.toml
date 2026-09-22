@@ -1,6 +1,6 @@
 [package]
 name = "lyset"
-version = "0.1.0"
+version = "0.1.2"
 edition = "2021"
 description = "Render a print-document IR to DOCX, PDF, and page PNGs via rdocx."
 repository = "https://github.com/lofcz/lyset"
@@ -8,15 +8,15 @@ repository = "https://github.com/lofcz/lyset"
 [dependencies]
 # `system-fonts` is off so PDF/PNG output is deterministic (bundled Carlito /
 # Caladea / Liberation).
-rdocx = { git = "https://github.com/lofcz/rdocx", default-features = false }
-oxml-media = { git = "https://github.com/lofcz/rdocx" }
+rdocx = { git = "https://github.com/lofcz/rdocx", rev = "0fb04d02ce785494476e4dd348efaf41e380c210", default-features = false }
+oxml-media = { git = "https://github.com/lofcz/rdocx", rev = "0fb04d02ce785494476e4dd348efaf41e380c210" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 base64 = "0.22"
 
 [dev-dependencies]
 # Page-frame inspection in render tests.
-oxml-layout = { git = "https://github.com/lofcz/rdocx" }
+oxml-layout = { git = "https://github.com/lofcz/rdocx", rev = "0fb04d02ce785494476e4dd348efaf41e380c210" }
 
 [profile.release]
 opt-level = 3
