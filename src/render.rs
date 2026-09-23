@@ -36,6 +36,12 @@ pub fn render(ir: &PrintDocument) -> Result<(Document, RenderReport), String> {
         return Err(format!("unsupported IR version {}", ir.version));
     }
     let mut doc = Document::new();
+    // Without an explicit version, Word opens new exports in Word 2007 compatibility mode.
+    doc.set_compatibility_setting(
+        "compatibilityMode",
+        "http://schemas.microsoft.com/office/word",
+        "15",
+    ).map_err(|e| format!("set Word compatibility mode: {e}"))?;
     embed_emoji_font(&mut doc)?;
     let mut ctx = Ctx::new(ir)?;
 
@@ -1896,6 +1902,19 @@ fn footer_mark(ctx: &mut Ctx, mark: &crate::ir::Watermark) -> Option<FooterMark>
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn exported_docx_retains_modern_word_compatibility_after_reopen() {
+        let (mut doc, _) = render(&sample_test()).expect("render");
+        let reopened = Document::from_bytes(&doc.to_bytes().expect("DOCX bytes"))
+            .expect("reopen DOCX");
+        let settings: Vec<_> = reopened.compatibility_settings().iter()
+            .filter(|setting| setting.name == "compatibilityMode"
+                && setting.uri == "http://schemas.microsoft.com/office/word")
+            .collect();
+        assert_eq!(settings.len(), 1);
+        assert_eq!(settings[0].value, "15");
+    }
 
     #[test]
     fn emoji_cards_have_real_glyphs_after_docx_round_trip() {
