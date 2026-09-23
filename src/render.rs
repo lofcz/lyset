@@ -36,6 +36,10 @@ pub fn render(ir: &PrintDocument) -> Result<(Document, RenderReport), String> {
         return Err(format!("unsupported IR version {}", ir.version));
     }
     let mut doc = Document::new();
+    // Lyset applies presentation directly to runs and paragraphs. Use the
+    // strict Word-compatible styles profile instead of emitting the richer
+    // built-in style graph, which Word's parser rejects in exported sheets.
+    doc.use_word_safe_styles();
     // Without an explicit version, Word opens new exports in Word 2007 compatibility mode.
     doc.set_compatibility_setting(
         "compatibilityMode",
