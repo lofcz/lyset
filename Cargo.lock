@@ -626,7 +626,7 @@ checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 [[package]]
 name = "oxml-chart"
 version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=0fb04d02ce785494476e4dd348efaf41e380c210#0fb04d02ce785494476e4dd348efaf41e380c210"
+source = "git+https://github.com/lofcz/rdocx?rev=d6fc113c#d6fc113c8dd66d3152a9c9dfe2f8dcca8f42b27c"
 dependencies = [
  "oxml-core",
  "oxml-drawing",
@@ -638,7 +638,7 @@ dependencies = [
 [[package]]
 name = "oxml-core"
 version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=0fb04d02ce785494476e4dd348efaf41e380c210#0fb04d02ce785494476e4dd348efaf41e380c210"
+source = "git+https://github.com/lofcz/rdocx?rev=d6fc113c#d6fc113c8dd66d3152a9c9dfe2f8dcca8f42b27c"
 dependencies = [
  "quick-xml",
  "thiserror",
@@ -647,7 +647,7 @@ dependencies = [
 [[package]]
 name = "oxml-drawing"
 version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=0fb04d02ce785494476e4dd348efaf41e380c210#0fb04d02ce785494476e4dd348efaf41e380c210"
+source = "git+https://github.com/lofcz/rdocx?rev=d6fc113c#d6fc113c8dd66d3152a9c9dfe2f8dcca8f42b27c"
 dependencies = [
  "oxml-core",
  "quick-xml",
@@ -656,7 +656,7 @@ dependencies = [
 [[package]]
 name = "oxml-layout"
 version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=0fb04d02ce785494476e4dd348efaf41e380c210#0fb04d02ce785494476e4dd348efaf41e380c210"
+source = "git+https://github.com/lofcz/rdocx?rev=d6fc113c#d6fc113c8dd66d3152a9c9dfe2f8dcca8f42b27c"
 dependencies = [
  "fontdb",
  "harfrust",
@@ -671,12 +671,12 @@ dependencies = [
 [[package]]
 name = "oxml-media"
 version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=0fb04d02ce785494476e4dd348efaf41e380c210#0fb04d02ce785494476e4dd348efaf41e380c210"
+source = "git+https://github.com/lofcz/rdocx?rev=d6fc113c#d6fc113c8dd66d3152a9c9dfe2f8dcca8f42b27c"
 
 [[package]]
 name = "oxml-opc"
 version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=0fb04d02ce785494476e4dd348efaf41e380c210#0fb04d02ce785494476e4dd348efaf41e380c210"
+source = "git+https://github.com/lofcz/rdocx?rev=d6fc113c#d6fc113c8dd66d3152a9c9dfe2f8dcca8f42b27c"
 dependencies = [
  "quick-xml",
  "thiserror",
@@ -686,7 +686,7 @@ dependencies = [
 [[package]]
 name = "oxml-pdf"
 version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=0fb04d02ce785494476e4dd348efaf41e380c210#0fb04d02ce785494476e4dd348efaf41e380c210"
+source = "git+https://github.com/lofcz/rdocx?rev=d6fc113c#d6fc113c8dd66d3152a9c9dfe2f8dcca8f42b27c"
 dependencies = [
  "jpeg-encoder",
  "miniz_oxide 0.9.1",
@@ -703,7 +703,7 @@ dependencies = [
 [[package]]
 name = "oxml-sml"
 version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=0fb04d02ce785494476e4dd348efaf41e380c210#0fb04d02ce785494476e4dd348efaf41e380c210"
+source = "git+https://github.com/lofcz/rdocx?rev=d6fc113c#d6fc113c8dd66d3152a9c9dfe2f8dcca8f42b27c"
 dependencies = [
  "oxml-opc",
  "quick-xml",
@@ -873,7 +873,7 @@ dependencies = [
 [[package]]
 name = "rdocx"
 version = "0.14.0"
-source = "git+https://github.com/lofcz/rdocx?rev=0fb04d02ce785494476e4dd348efaf41e380c210#0fb04d02ce785494476e4dd348efaf41e380c210"
+source = "git+https://github.com/lofcz/rdocx?rev=d6fc113c#d6fc113c8dd66d3152a9c9dfe2f8dcca8f42b27c"
 dependencies = [
  "base64 0.23.1",
  "encoding_rs",
@@ -900,7 +900,7 @@ dependencies = [
 [[package]]
 name = "rdocx-html"
 version = "0.14.0"
-source = "git+https://github.com/lofcz/rdocx?rev=0fb04d02ce785494476e4dd348efaf41e380c210#0fb04d02ce785494476e4dd348efaf41e380c210"
+source = "git+https://github.com/lofcz/rdocx?rev=d6fc113c#d6fc113c8dd66d3152a9c9dfe2f8dcca8f42b27c"
 dependencies = [
  "rdocx-oxml",
 ]
@@ -908,7 +908,7 @@ dependencies = [
 [[package]]
 name = "rdocx-layout"
 version = "0.14.0"
-source = "git+https://github.com/lofcz/rdocx?rev=0fb04d02ce785494476e4dd348efaf41e380c210#0fb04d02ce785494476e4dd348efaf41e380c210"
+source = "git+https://github.com/lofcz/rdocx?rev=d6fc113c#d6fc113c8dd66d3152a9c9dfe2f8dcca8f42b27c"
 dependencies = [
  "oxml-chart",
  "oxml-drawing",
@@ -919,7 +919,7 @@ dependencies = [
 [[package]]
 name = "rdocx-oxml"
 version = "0.14.0"
-source = "git+https://github.com/lofcz/rdocx?rev=0fb04d02ce785494476e4dd348efaf41e380c210#0fb04d02ce785494476e4dd348efaf41e380c210"
+source = "git+https://github.com/lofcz/rdocx?rev=d6fc113c#d6fc113c8dd66d3152a9c9dfe2f8dcca8f42b27c"
 dependencies = [
  "itoa",
  "oxml-core",

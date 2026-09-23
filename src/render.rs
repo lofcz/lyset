@@ -92,8 +92,6 @@ fn embed_emoji_font(doc: &mut Document) -> Result<(), String> {
 // ---------------------------------------------------------------------------
 
 struct EmbeddedImage {
-    bytes: Vec<u8>,
-    filename: String,
     rel_id: String,
     width_px: u32,
     height_px: u32,
@@ -324,7 +322,7 @@ fn embed_image(doc: &mut Document, ctx: &mut Ctx, image: &Image) {
     let rel_id = doc.embed_image(&bytes, &filename);
     ctx.images.insert(
         key,
-        EmbeddedImage { bytes, filename, rel_id, width_px: info.width_px, height_px: info.height_px },
+        EmbeddedImage { rel_id, width_px: info.width_px, height_px: info.height_px },
     );
 }
 
@@ -350,7 +348,11 @@ impl Sink for Document {
         self.add_table(rows, cols)
     }
     fn picture(&mut self, img: &EmbeddedImage, w: Length, h: Length) -> Paragraph<'_> {
-        self.add_picture(&img.bytes, &img.filename, w, h)
+        // The image was already embedded by collect_assets. Reuse its
+        // relationship instead of creating a duplicate media part.
+        let mut paragraph = self.add_paragraph("");
+        paragraph.add_picture_with_relationship(&img.rel_id, w, h);
+        paragraph
     }
     fn direct_paragraph_count(&self) -> usize {
         self.paragraph_count()
