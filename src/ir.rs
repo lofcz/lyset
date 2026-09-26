@@ -172,6 +172,7 @@ pub enum ParagraphStyle {
     Small,
     Caption,
     Label,
+    Code,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]

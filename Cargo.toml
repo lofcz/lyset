@@ -8,8 +8,8 @@ repository = "https://github.com/lofcz/lyset"
 [dependencies]
 # `system-fonts` is off so PDF/PNG output is deterministic (bundled Carlito /
 # Caladea / Liberation).
-rdocx = { git = "https://github.com/lofcz/rdocx", rev = "d6fc113c", default-features = false }
-oxml-media = { git = "https://github.com/lofcz/rdocx", rev = "d6fc113c" }
+rdocx = { git = "https://github.com/lofcz/rdocx", rev = "0adf139536d91b8a1ab54d28c5c9f7fa39fc5004", default-features = false }
+oxml-media = { git = "https://github.com/lofcz/rdocx", rev = "0adf139536d91b8a1ab54d28c5c9f7fa39fc5004" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 base64 = "0.22"
@@ -18,7 +18,7 @@ unicode-segmentation = "1.12"
 
 [dev-dependencies]
 # Page-frame inspection in render tests.
-oxml-layout = { git = "https://github.com/lofcz/rdocx", rev = "d6fc113c", default-features = false }
+oxml-layout = { git = "https://github.com/lofcz/rdocx", rev = "0adf139536d91b8a1ab54d28c5c9f7fa39fc5004", default-features = false }
 
 [profile.release]
 opt-level = 3

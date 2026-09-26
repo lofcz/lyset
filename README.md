@@ -35,3 +35,12 @@ cargo test --locked
 # Windows MSVC cross-build from Linux (requires cargo-xwin):
 cargo xwin build --release --locked --target x86_64-pc-windows-msvc
 ```
+
+Code blocks use a `paragraph` with `style: "code"` and literal text/break
+inlines. They render as shaded, regular monospace paragraphs. Four-column
+tabs, indentation and empty lines are preserved. Long blocks may span pages.
+Older task prompts containing code-only lines are split into code blocks
+without treating inline identifiers inside prose as blocks.
+
+GitHub Actions builds `lyset-linux-x86_64` and `lyset-windows-x86_64`
+artifacts on pushes. The rdocx revision is pinned in both Cargo files.
