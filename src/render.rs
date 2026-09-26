@@ -491,19 +491,16 @@ fn write_inlines(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline], base:
 fn write_inlines_inner(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline], base: &RunStyle) {
     for inline in inlines {
         match inline {
-            Inline::Text { text, bold, italic, underline, strike, code, sup, sub, tone } => {
+            Inline::Text { text, bold, italic, underline, strike, code, sup, sub, tone, color } => {
                 let mut style = base.clone();
-                if bold.unwrap_or(false) {
-                    style.bold = true;
-                }
-                if italic.unwrap_or(false) {
-                    style.italic = true;
-                }
+                if let Some(bold) = bold { style.bold = *bold; }
+                if let Some(italic) = italic { style.italic = *italic; }
                 if let Some(tone) = tone {
                     if *tone != Tone::Default {
                         style.color = ctx.tone_color(*tone);
                     }
                 }
+                if let Some(color) = color.as_deref().and_then(token_color) { style.color = color; }
                 styled_runs(p, text, &style, |run, emoji| {
                     if code.unwrap_or(false) {
                         if !emoji { run.set_font(t::FONT_MONO); }
@@ -640,6 +637,10 @@ fn render_block<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, block: &Blo
         }
         Block::Paragraph { content, style, align, trailing, indent, keep_with_next } => {
             let style = style.unwrap_or_default();
+            if style == ParagraphStyle::Code {
+                render_code(sink, frame, content, keep_with_next.unwrap_or(false));
+                return;
+            }
             let extra_indent = indent.unwrap_or(0) as f64 * t::LIST_INDENT_MM;
             let f = frame.indented(extra_indent);
             let mut p = sink.para();
@@ -741,6 +742,72 @@ fn render_block<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, block: &Blo
         Block::Cards { columns, height_mm, cut, items } => render_cards(sink, ctx, frame, *columns, *height_mm, cut.unwrap_or(false), items),
         Block::Grid { rows, row_labels, cell_mm, align } => render_grid(sink, ctx, frame, rows, row_labels.as_deref(), *cell_mm, *align),
     }
+}
+
+/// Code is a paragraph with literal OOXML controls, not a bold task prompt.
+/// Normal line wrapping and paragraph pagination let long snippets span pages.
+fn render_code<S: Sink>(sink: &mut S, frame: &Frame, content: &[Inline], keep: bool) {
+    // Retain token boundaries: flattening these runs discards Shiki colours.
+    let mut tokens: Vec<(String, &Inline)> = content.iter().map(|inline| {
+        let text = match inline {
+            Inline::Text { text, .. } | Inline::Link { text, .. } => text.clone(),
+            Inline::Break => "\n".to_string(),
+            Inline::Math { tex, .. } => tex.clone(),
+            Inline::Blank { width, answer, reveal } => {
+                if reveal.unwrap_or(false) { answer.clone().unwrap_or_default() }
+                else { "_".repeat((*width).min(120) as usize) }
+            }
+        };
+        (text.replace("\r\n", "\n").replace('\r', "\n"), inline)
+    }).collect();
+    // Remove the fence's terminating newline, including a separate break token.
+    if let Some((text, _)) = tokens.iter_mut().rev().find(|(text, _)| !text.is_empty()) {
+        if text.ends_with('\n') { text.pop(); }
+    }
+    let mut column = 0;
+    let mut lines = 1;
+    for (text, _) in &mut tokens {
+        let mut expanded = String::new();
+        for ch in text.chars() {
+            if ch == '\t' {
+                let spaces = 4 - column % 4;
+                expanded.extend(std::iter::repeat_n(' ', spaces));
+                column += spaces;
+            } else {
+                expanded.push(ch);
+                if ch == '\n' { column = 0; lines += 1; }
+                else { column += 1; }
+            }
+        }
+        *text = expanded;
+    }
+    let mut p = sink.para();
+    spacing_sized(&mut p, 6.0, 6.0, t::PT_BODY - 1.0, 1.0);
+    p.set_indent_left(Length::mm(frame.indent + 3.0));
+    p.set_indent_right(Length::mm(3.0));
+    p.set_shading(t::SOFT);
+    p.set_border_all(BorderStyle::Single, 4, t::RULE);
+    p.set_keep_together(lines <= 12);
+    p.set_keep_with_next(keep);
+    for (text, inline) in tokens {
+        if text.is_empty() { continue; }
+        let mut run = p.add_code_run(&text);
+        run.set_font(t::FONT_MONO);
+        run.set_size(t::PT_BODY - 1.0);
+        run.set_color(t::INK);
+        if let Inline::Text { color, bold, italic, underline, strike, .. } = inline {
+            if let Some(color) = color.as_deref().and_then(token_color) { run.set_color(&color); }
+            run.set_bold(bold.unwrap_or(false));
+            run.set_italic(italic.unwrap_or(false));
+            run.set_underline(underline.unwrap_or(false));
+            run.set_strike(strike.unwrap_or(false));
+        }
+    }
+}
+
+fn token_color(value: &str) -> Option<String> {
+    let hex = value.trim().trim_start_matches('#');
+    (hex.len() == 6 && hex.bytes().all(|b| b.is_ascii_hexdigit())).then(|| hex.to_ascii_uppercase())
 }
 
 // ---------------------------------------------------------------------------
@@ -908,7 +975,7 @@ fn render_grid<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, rows: &[Vec<
 
 fn uppercase_inline(inline: &Inline) -> Inline {
     match inline {
-        Inline::Text { text, bold, italic, underline, strike, code, sup, sub, tone } => Inline::Text {
+        Inline::Text { text, bold, italic, underline, strike, code, sup, sub, tone, color } => Inline::Text {
             text: text.to_uppercase(),
             bold: *bold,
             italic: *italic,
@@ -918,6 +985,7 @@ fn uppercase_inline(inline: &Inline) -> Inline {
             sup: *sup,
             sub: *sub,
             tone: *tone,
+            color: color.clone(),
         },
         other => other.clone(),
     }
@@ -925,6 +993,7 @@ fn uppercase_inline(inline: &Inline) -> Inline {
 
 fn run_style_for(style: ParagraphStyle) -> RunStyle {
     match style {
+        ParagraphStyle::Code => RunStyle::body().with_size(t::PT_BODY - 1.0),
         ParagraphStyle::Body => RunStyle::body(),
         ParagraphStyle::Lead => RunStyle::body().with_size(t::PT_LEAD),
         ParagraphStyle::Small => RunStyle::body().with_size(t::PT_SMALL),
@@ -936,6 +1005,7 @@ fn run_style_for(style: ParagraphStyle) -> RunStyle {
 fn apply_paragraph_style(p: &mut Paragraph<'_>, frame: &Frame, style: ParagraphStyle) {
     let size = run_style_for(style).size;
     match style {
+        ParagraphStyle::Code => spacing_sized(p, 6.0, 6.0, size, 1.0),
         ParagraphStyle::Body => spacing_sized(p, 0.0, 4.0, size, t::LINE_MULTIPLE),
         ParagraphStyle::Lead => spacing_sized(p, 0.0, 6.0, size, t::LINE_MULTIPLE),
         ParagraphStyle::Small => spacing_sized(p, 0.0, 3.0, size, t::LINE_MULTIPLE),
@@ -1499,7 +1569,7 @@ fn render_image<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, image: &Ima
         write_inlines(
             ctx,
             &mut p,
-            &[Inline::Text { text: caption.trim().to_string(), bold: None, italic: None, underline: None, strike: None, code: None, sup: None, sub: None, tone: None }],
+            &[Inline::Text { text: caption.trim().to_string(), bold: None, italic: None, underline: None, strike: None, code: None, sup: None, sub: None, tone: None, color: None }],
             &run_style_for(ParagraphStyle::Caption),
         );
     }
@@ -1594,7 +1664,38 @@ fn render_fields<S: Sink>(sink: &mut S, frame: &Frame, items: &[Field]) {
     gap(sink, 4.0);
 }
 
+// Older callers put the whole question, including code, into prompt inlines.
+// Recognize code-only lines while keeping inline identifiers inside prose.
+fn split_legacy_code_prompt(prompt: &[Inline]) -> Option<Vec<Block>> {
+    let lines: Vec<&[Inline]> = prompt.split(|inline| matches!(inline, Inline::Break)).collect();
+    let is_code = |line: &&[Inline]| !line.is_empty() && line.iter().any(|i| matches!(i, Inline::Text { code: Some(true), .. })) &&
+        line.iter().all(|i| matches!(i, Inline::Text { code: Some(true), .. }) || matches!(i, Inline::Text { text, .. } if text.trim().is_empty()));
+    if !lines.iter().any(is_code) { return None; }
+    let mut result: Vec<Block> = Vec::new();
+    for line in lines {
+        let code = is_code(&line);
+        let style = if code { ParagraphStyle::Code } else { ParagraphStyle::Body };
+        if let Some(Block::Paragraph { content, style: Some(previous), .. }) = result.last_mut() {
+            if *previous == style {
+                content.push(Inline::Break);
+                content.extend_from_slice(line);
+                continue;
+            }
+        }
+        result.push(Block::Paragraph { content: line.to_vec(), style: Some(style), align: None, trailing: None, indent: None, keep_with_next: None });
+    }
+    Some(result)
+}
+
 fn render_task<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, number: Option<i64>, points: Option<&str>, prompt: &[Inline], blocks: &[Block]) {
+    if let Some(mut rich) = split_legacy_code_prompt(prompt) {
+        let lead = if matches!(rich.first(), Some(Block::Paragraph { style: Some(ParagraphStyle::Body), .. })) {
+            match rich.remove(0) { Block::Paragraph { content, .. } => content, _ => unreachable!() }
+        } else { Vec::new() };
+        rich.extend_from_slice(blocks);
+        render_task(sink, ctx, frame, number, points, &lead, &rich);
+        return;
+    }
     let gutter = t::TASK_GUTTER_MM;
     let inner = frame.indented(gutter);
     let mut body_blocks: &[Block] = blocks;
@@ -1618,7 +1719,7 @@ fn render_task<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, number: Opti
     let mut trailing: Option<&[Inline]> = None;
     if !prompt.is_empty() {
         write_inlines(ctx, &mut p, prompt, &prompt_style);
-    } else if let Some((Block::Paragraph { content, trailing: tr, .. }, rest)) = blocks.split_first() {
+    } else if let Some((Block::Paragraph { content, trailing: tr, style: None | Some(ParagraphStyle::Body | ParagraphStyle::Lead | ParagraphStyle::Small | ParagraphStyle::Caption | ParagraphStyle::Label), .. }, rest)) = blocks.split_first() {
         write_inlines(ctx, &mut p, content, &RunStyle::body());
         trailing = tr.as_deref().filter(|x| !x.is_empty());
         body_blocks = rest;
@@ -1908,6 +2009,95 @@ fn footer_mark(ctx: &mut Ctx, mark: &crate::ir::Watermark) -> Option<FooterMark>
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn code_blocks_keep_literal_text_and_regular_monospace_in_word_and_pdf() {
+        let ir = parse(r#"{"version":1,"locale":"cs","kind":"worksheet","title":"Code","blocks":[
+          {"kind":"task","number":1,"prompt":[{"kind":"text","text":"Read the code:"}],"blocks":[
+            {"kind":"paragraph","style":"code","content":[{"kind":"text","text":"if x < 2:\n\tprint(\"žluťoučký\")\n\nend\n","code":true}]},
+            {"kind":"paragraph","content":[{"kind":"text","text":"What happens?"}]}]}]}"#);
+        let (mut doc, report) = render(&ir).unwrap();
+        assert!(report.warnings.is_empty());
+        let reopened = Document::from_bytes(&doc.to_bytes().unwrap()).unwrap();
+        let paragraphs = reopened.paragraphs();
+        let code = paragraphs.iter().find(|p| p.text().starts_with("if x")).unwrap();
+        assert_eq!(code.text(), "if x < 2:\n    print(\"žluťoučký\")\n\nend");
+        for run in code.runs() {
+            assert_eq!(run.bold_value(), Some(false));
+            assert_eq!(run.italic_value(), Some(false));
+        }
+        assert!(reopened.to_pdf().unwrap().starts_with(b"%PDF"));
+    }
+
+    #[test]
+    fn highlighted_tokens_survive_docx_round_trip_and_pdf_layout() {
+        let ir = parse(r##"{"version":1,"locale":"en","kind":"worksheet","title":"Tokens","blocks":[
+          {"kind":"paragraph","style":"code","content":[
+            {"kind":"text","text":"let","color":"#D73A49","bold":true},
+            {"kind":"text","text":"\tvalue = ","color":"#005CC5"},
+            {"kind":"text","text":"1;\n","color":"#005CC5"},
+            {"kind":"text","text":"// comment","color":"#6A737D","italic":true},
+            {"kind":"break"}]}]}"##);
+        let (mut doc, _) = render(&ir).unwrap();
+        let reopened = Document::from_bytes(&doc.to_bytes().unwrap()).unwrap();
+        let paragraphs = reopened.paragraphs();
+        let code = &paragraphs[0];
+        assert_eq!(code.text(), "let value = 1;\n// comment");
+        let runs: Vec<_> = code.runs().collect();
+        assert_eq!(runs[0].color(), Some("D73A49"));
+        assert_eq!(runs[0].bold_value(), Some(true));
+        assert_eq!(runs[1].color(), Some("005CC5"));
+        assert_eq!(runs[1].bold_value(), Some(false));
+        assert_eq!(runs[3].color(), Some("6A737D"));
+        assert_eq!(runs[3].italic_value(), Some(true));
+        let layout = reopened.layout().unwrap();
+        let mut saw_keyword = false;
+        let mut saw_comment = false;
+        for page in &layout.layout.pages {
+            oxml_layout::walk(&page.elements, &mut |element, _| {
+                if let oxml_layout::PositionedElement::Text(run) = element {
+                    if run.text == "let" {
+                        saw_keyword = true;
+                        assert!(run.bold);
+                        assert_eq!(run.color, oxml_layout::Color { r: 215.0 / 255.0, g: 58.0 / 255.0, b: 73.0 / 255.0, a: 1.0 });
+                    }
+                    if run.text.contains("comment") {
+                        saw_comment = true;
+                        assert!(run.italic);
+                        assert_eq!(run.color, oxml_layout::Color { r: 106.0 / 255.0, g: 115.0 / 255.0, b: 125.0 / 255.0, a: 1.0 });
+                    }
+                }
+            });
+        }
+        assert!(saw_keyword && saw_comment);
+        assert!(reopened.to_pdf().unwrap().starts_with(b"%PDF"));
+        assert_eq!(token_color("#bad-value"), None);
+    }
+
+    #[test]
+    fn long_code_blocks_paginate_without_losing_source_lines() {
+        let source = (0..120).map(|i| format!("    print({i})\n")).collect::<String>();
+        let ir = parse(&serde_json::json!({
+            "version": 1, "locale": "en", "kind": "worksheet", "title": "Code",
+            "blocks": [{ "kind": "paragraph", "style": "code", "content": [{ "kind": "text", "text": source, "code": true }] }]
+        }).to_string());
+        let (doc, _) = render(&ir).unwrap();
+        assert!(doc.layout().unwrap().layout.pages.len() > 1);
+        assert_eq!(doc.paragraphs()[0].text(), source.trim_end_matches('\n'));
+    }
+
+    #[test]
+    fn legacy_prompt_code_lines_become_blocks_but_inline_identifiers_do_not() {
+        let ir = parse(r#"{"version":1,"locale":"en","kind":"worksheet","title":"Code","blocks":[
+          {"kind":"task","number":1,"prompt":[{"kind":"text","text":"Read:"},{"kind":"break"},
+            {"kind":"text","text":"repeat 3","code":true},{"kind":"break"},{"kind":"text","text":"    move 10","code":true},
+            {"kind":"break"},{"kind":"text","text":"Value of "},{"kind":"text","text":"x","code":true},{"kind":"text","text":"?"}],"blocks":[]}] }"#);
+        let (doc, _) = render(&ir).unwrap();
+        let paragraphs = doc.paragraphs();
+        let code = paragraphs.iter().find(|p| p.text() == "repeat 3\n    move 10").unwrap();
+        assert!(code.runs().all(|r| !r.is_bold()));
+        assert!(paragraphs.iter().any(|p| p.text() == "Value of x?"));
+    }
 
     #[test]
     fn exported_docx_retains_modern_word_compatibility_after_reopen() {
