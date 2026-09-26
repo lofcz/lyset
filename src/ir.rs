@@ -127,6 +127,9 @@ pub enum Inline {
         sub: Option<bool>,
         #[serde(default)]
         tone: Option<Tone>,
+        /// Syntax token foreground, six hexadecimal digits (optional #).
+        #[serde(default)]
+        color: Option<String>,
     },
     /// Inline formula. `tex` is the authored LaTeX (kept for text fallbacks
     /// and diagnostics); `mathml` is optional presentation MathML, converted

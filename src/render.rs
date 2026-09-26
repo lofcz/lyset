@@ -491,7 +491,7 @@ fn write_inlines(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline], base:
 fn write_inlines_inner(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline], base: &RunStyle) {
     for inline in inlines {
         match inline {
-            Inline::Text { text, bold, italic, underline, strike, code, sup, sub, tone } => {
+            Inline::Text { text, bold, italic, underline, strike, code, sup, sub, tone, color } => {
                 let mut style = base.clone();
                 if let Some(bold) = bold { style.bold = *bold; }
                 if let Some(italic) = italic { style.italic = *italic; }
@@ -500,6 +500,7 @@ fn write_inlines_inner(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline],
                         style.color = ctx.tone_color(*tone);
                     }
                 }
+                if let Some(color) = color.as_deref().and_then(token_color) { style.color = color; }
                 styled_runs(p, text, &style, |run, emoji| {
                     if code.unwrap_or(false) {
                         if !emoji { run.set_font(t::FONT_MONO); }
@@ -746,32 +747,39 @@ fn render_block<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, block: &Blo
 /// Code is a paragraph with literal OOXML controls, not a bold task prompt.
 /// Normal line wrapping and paragraph pagination let long snippets span pages.
 fn render_code<S: Sink>(sink: &mut S, frame: &Frame, content: &[Inline], keep: bool) {
-    let mut source = String::new();
-    for inline in content {
-        match inline {
-            Inline::Text { text, .. } | Inline::Link { text, .. } => source.push_str(text),
-            Inline::Break => source.push('\n'),
-            Inline::Math { tex, .. } => source.push_str(tex),
+    // Retain token boundaries: flattening these runs discards Shiki colours.
+    let mut tokens: Vec<(String, &Inline)> = content.iter().map(|inline| {
+        let text = match inline {
+            Inline::Text { text, .. } | Inline::Link { text, .. } => text.clone(),
+            Inline::Break => "\n".to_string(),
+            Inline::Math { tex, .. } => tex.clone(),
             Inline::Blank { width, answer, reveal } => {
-                if reveal.unwrap_or(false) { source.push_str(answer.as_deref().unwrap_or("")); }
-                else { source.push_str(&"_".repeat((*width).min(120) as usize)); }
+                if reveal.unwrap_or(false) { answer.clone().unwrap_or_default() }
+                else { "_".repeat((*width).min(120) as usize) }
+            }
+        };
+        (text.replace("\r\n", "\n").replace('\r', "\n"), inline)
+    }).collect();
+    // Remove the fence's terminating newline, including a separate break token.
+    if let Some((text, _)) = tokens.iter_mut().rev().find(|(text, _)| !text.is_empty()) {
+        if text.ends_with('\n') { text.pop(); }
+    }
+    let mut column = 0;
+    let mut lines = 1;
+    for (text, _) in &mut tokens {
+        let mut expanded = String::new();
+        for ch in text.chars() {
+            if ch == '\t' {
+                let spaces = 4 - column % 4;
+                expanded.extend(std::iter::repeat_n(' ', spaces));
+                column += spaces;
+            } else {
+                expanded.push(ch);
+                if ch == '\n' { column = 0; lines += 1; }
+                else { column += 1; }
             }
         }
-    }
-    // A fence contributes one terminating newline, not an extra empty line.
-    if source.ends_with('\n') { source.pop(); }
-    // Fixed tab stops are source columns, independent of surrounding prose.
-    let mut expanded = String::new();
-    let mut column = 0;
-    for ch in source.chars() {
-        if ch == '\t' {
-            let spaces = 4 - column % 4;
-            expanded.extend(std::iter::repeat_n(' ', spaces));
-            column += spaces;
-        } else {
-            expanded.push(ch);
-            column = if ch == '\n' { 0 } else { column + 1 };
-        }
+        *text = expanded;
     }
     let mut p = sink.para();
     spacing_sized(&mut p, 6.0, 6.0, t::PT_BODY - 1.0, 1.0);
@@ -779,12 +787,27 @@ fn render_code<S: Sink>(sink: &mut S, frame: &Frame, content: &[Inline], keep: b
     p.set_indent_right(Length::mm(3.0));
     p.set_shading(t::SOFT);
     p.set_border_all(BorderStyle::Single, 4, t::RULE);
-    p.set_keep_together(expanded.lines().count() <= 12);
+    p.set_keep_together(lines <= 12);
     p.set_keep_with_next(keep);
-    let mut run = p.add_code_run(&expanded);
-    run.set_font(t::FONT_MONO);
-    run.set_size(t::PT_BODY - 1.0);
-    run.set_color(t::INK);
+    for (text, inline) in tokens {
+        if text.is_empty() { continue; }
+        let mut run = p.add_code_run(&text);
+        run.set_font(t::FONT_MONO);
+        run.set_size(t::PT_BODY - 1.0);
+        run.set_color(t::INK);
+        if let Inline::Text { color, bold, italic, underline, strike, .. } = inline {
+            if let Some(color) = color.as_deref().and_then(token_color) { run.set_color(&color); }
+            run.set_bold(bold.unwrap_or(false));
+            run.set_italic(italic.unwrap_or(false));
+            run.set_underline(underline.unwrap_or(false));
+            run.set_strike(strike.unwrap_or(false));
+        }
+    }
+}
+
+fn token_color(value: &str) -> Option<String> {
+    let hex = value.trim().trim_start_matches('#');
+    (hex.len() == 6 && hex.bytes().all(|b| b.is_ascii_hexdigit())).then(|| hex.to_ascii_uppercase())
 }
 
 // ---------------------------------------------------------------------------
@@ -952,7 +975,7 @@ fn render_grid<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, rows: &[Vec<
 
 fn uppercase_inline(inline: &Inline) -> Inline {
     match inline {
-        Inline::Text { text, bold, italic, underline, strike, code, sup, sub, tone } => Inline::Text {
+        Inline::Text { text, bold, italic, underline, strike, code, sup, sub, tone, color } => Inline::Text {
             text: text.to_uppercase(),
             bold: *bold,
             italic: *italic,
@@ -962,6 +985,7 @@ fn uppercase_inline(inline: &Inline) -> Inline {
             sup: *sup,
             sub: *sub,
             tone: *tone,
+            color: color.clone(),
         },
         other => other.clone(),
     }
@@ -1545,7 +1569,7 @@ fn render_image<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, image: &Ima
         write_inlines(
             ctx,
             &mut p,
-            &[Inline::Text { text: caption.trim().to_string(), bold: None, italic: None, underline: None, strike: None, code: None, sup: None, sub: None, tone: None }],
+            &[Inline::Text { text: caption.trim().to_string(), bold: None, italic: None, underline: None, strike: None, code: None, sup: None, sub: None, tone: None, color: None }],
             &run_style_for(ParagraphStyle::Caption),
         );
     }
@@ -2003,6 +2027,51 @@ mod tests {
             assert_eq!(run.italic_value(), Some(false));
         }
         assert!(reopened.to_pdf().unwrap().starts_with(b"%PDF"));
+    }
+
+    #[test]
+    fn highlighted_tokens_survive_docx_round_trip_and_pdf_layout() {
+        let ir = parse(r##"{"version":1,"locale":"en","kind":"worksheet","title":"Tokens","blocks":[
+          {"kind":"paragraph","style":"code","content":[
+            {"kind":"text","text":"let","color":"#D73A49","bold":true},
+            {"kind":"text","text":"\tvalue = ","color":"#005CC5"},
+            {"kind":"text","text":"1;\n","color":"#005CC5"},
+            {"kind":"text","text":"// comment","color":"#6A737D","italic":true},
+            {"kind":"break"}]}]}"##);
+        let (mut doc, _) = render(&ir).unwrap();
+        let reopened = Document::from_bytes(&doc.to_bytes().unwrap()).unwrap();
+        let paragraphs = reopened.paragraphs();
+        let code = &paragraphs[0];
+        assert_eq!(code.text(), "let value = 1;\n// comment");
+        let runs: Vec<_> = code.runs().collect();
+        assert_eq!(runs[0].color(), Some("D73A49"));
+        assert_eq!(runs[0].bold_value(), Some(true));
+        assert_eq!(runs[1].color(), Some("005CC5"));
+        assert_eq!(runs[1].bold_value(), Some(false));
+        assert_eq!(runs[3].color(), Some("6A737D"));
+        assert_eq!(runs[3].italic_value(), Some(true));
+        let layout = reopened.layout().unwrap();
+        let mut saw_keyword = false;
+        let mut saw_comment = false;
+        for page in &layout.layout.pages {
+            oxml_layout::walk(&page.elements, &mut |element, _| {
+                if let oxml_layout::PositionedElement::Text(run) = element {
+                    if run.text == "let" {
+                        saw_keyword = true;
+                        assert!(run.bold);
+                        assert_eq!(run.color, oxml_layout::Color { r: 215.0 / 255.0, g: 58.0 / 255.0, b: 73.0 / 255.0, a: 1.0 });
+                    }
+                    if run.text.contains("comment") {
+                        saw_comment = true;
+                        assert!(run.italic);
+                        assert_eq!(run.color, oxml_layout::Color { r: 106.0 / 255.0, g: 115.0 / 255.0, b: 125.0 / 255.0, a: 1.0 });
+                    }
+                }
+            });
+        }
+        assert!(saw_keyword && saw_comment);
+        assert!(reopened.to_pdf().unwrap().starts_with(b"%PDF"));
+        assert_eq!(token_color("#bad-value"), None);
     }
 
     #[test]
