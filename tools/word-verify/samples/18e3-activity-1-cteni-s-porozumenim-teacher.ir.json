@@ -1,0 +1,419 @@
+{
+ "version": 1,
+ "locale": "sk",
+ "kind": "activity",
+ "title": "Loreml ipsumipsumip dolordolo",
+ "footer": {
+  "left": "Loreml ipsumipsumip dolordolo  ·  Sitsitsi",
+  "pageNumbers": true,
+  "pageNumberFormat": "Strana {page} / {pages}"
+ },
+ "watermark": {
+  "image": {
+   "mime": "image/png",
+   "alt": "Loremlo",
+   "data": "iVBORw0KGgoAAAANSUhEUgAAAEsAAAAPCAIAAAAj5aXHAAAAMUlEQVR4nO3RAQ0AAAzCMPwrQ9ZVPM+eVQFk6Xfpdz7ksyGfDflsyGdDPhvy5XrAugECsE1PSVY/zAAAAABJRU5ErkJggg=="
+  },
+  "widthMm": 22
+ },
+ "blocks": [
+  {
+   "kind": "heading",
+   "level": 1,
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loreml ipsumipsumip dolordolo"
+    }
+   ],
+   "kicker": "Loremlo i dolordolord  ·  Sitsitsi"
+  },
+  {
+   "kind": "paragraph",
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loremlorem ip dolordo sitsi amet (consecte adipiscin elitel) s do eiusmod temportem incididunt utututu laborel etetete do magnam aliqua. Lorem ipsum do sitsi ameta consect adipisc."
+    }
+   ],
+   "style": "lead"
+  },
+  {
+   "kind": "rule",
+   "tone": "accent"
+  },
+  {
+   "kind": "panel",
+   "variant": "story",
+   "blocks": [
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Lor ipsumipsu d sitsits ametame co adipiscing elite sedsedseds dodod eiusm. Tempo incid ut laborelabor e dolor magnamagna aliquaa: loremloremlor i dolordolord. Sitsitsitsit ameta conse adipisc e sedsedseds dodododo eiusm tempor incidi ututu laborelaborel (etetetete do magna, aliqua, loremlore i dolordolord). Sitsitsits ameta conse adipis elitel sedsedse d eiusmode temportempor i utututut la etetetete dolore magna. A loremloreml ipsumipsumip dolo sitsit ametam consect adipisci (elitelitelitel sedsedse): dodod eiusmodeius te inc utu lab etetete doloredo magnamagnama, al loremlo ipsumip dolord s ametame co adipiscin. E sedsedsedse Dodododo eiusmod tempo incidid: utututut labore et dolore magnam aliqua lorem ipsumi dolordo sitsitsit ametameta conse. Adipiscin eli sedsedsedse dodod, eiusmodeius temporte i ututututut labore."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "task",
+   "number": 1,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Lorem ipsumips dolordolord sitsit amet c adipiscinga Elitelit sedsedse d e tempo incidi?"
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "options",
+     "columns": 1,
+     "items": [
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml ipsumip dolordol, sitsits ametame consecte adipisc el sedse dododod eiusmode temport."
+        }
+       ],
+       "correct": true
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml ipsumipsumips dolor sitsi, ametame consect adipiscin elitelit sedsedse dodododo ei temportemp inci."
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml ipsumip dolordolor, sitsits ametam consec adipiscing eli sed dodododod eiusmod temport."
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml ipsumipsumi dolordolor, sitsits ametamet conse adipis eliteli sedsedsed d eiusmodeius temportem."
+        }
+       ],
+       "correct": false
+      }
+     ],
+     "reveal": true
+    },
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremloreml: ",
+       "bold": true,
+       "tone": "muted"
+      },
+      {
+       "kind": "text",
+       "text": "L ipsumipsumi Dolordol sits ametamet consec adipisc elitelit (sedse dodododod ei tem inc utututu laborela etetetetetet), dolored magnama aliquaa loremlor ipsumip dolord si ameta consect adipiscin eliteli.",
+       "tone": "muted"
+      }
+     ],
+     "style": "small"
+    }
+   ]
+  },
+  {
+   "kind": "panel",
+   "variant": "story",
+   "blocks": [
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlor ipsumips dolordolo sitsi ametametamet, consect adipiscingadi elite sedse dododod. Eiusmodei temporte incididunt utututu laborela: etetetete d magnamagnam aliq, lorem ipsumipsumips d sitsitsi ametametamet consecteturc, adi el sedsedseds dododod eiusmodeiu temporte. In utututu labor etetetetetet doloredoloredo magnam aliquaa l ipsumipsumipsum dolor, sitsitsi amet con adipis (elit. 15 se 20 dodo), ei tempo i utututu laborelabore etetetete d magna aliqua loremlorem ipsumi. Dolord, sit ametamet, consecte a elitelit sedse do eiusmode temp incididu utututut (labo. 4 et 6 dolo), ma aliqu l ipsumi dolordolordo sitsitsit a consectet adipiscingadip elitelit. Sedse dodododod eiusmodeius temportempo incidi, ut laborel etetetet: doloredol magnamagnam aliq, loremlo ipsumi dolordolor sitsitsits a consectet adipis elitelitel sedseds do eiusmode tempor."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "task",
+   "number": 2,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Lorem i dolordolordol sitsits a consect adipiscingad elitelite s dododod eiusmode temportempo incidid u labor?"
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "options",
+     "columns": 1,
+     "items": [
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml ipsumipsu do sitsitsit ametame consecte adipisci e sedsed dododo eiusmo temporte, in ut labore etete dol magnamagn a loremloremloremlo ipsumipsumi."
+        }
+       ],
+       "correct": true
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml ipsumipsu dolordolo sitsitsitsi amet c adipisc eliteli sedsedseds dododod ei temporte incidi u laborelab et dolore magnamagna."
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml ipsumipsu dolordol sits ametamet consecte, adipisc eliteli seds dododod eiusmodeiusm temportempo in ututututut laborela."
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml ipsumips dolordol si ametametam consecteturc a elitelite, sed dododododod eiusmodeiu tempor incidid u laborel etete."
+        }
+       ],
+       "correct": false
+      }
+     ],
+     "reveal": true
+    },
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremloreml: ",
+       "bold": true,
+       "tone": "muted"
+      },
+      {
+       "kind": "text",
+       "text": "Lorem ipsum dolord sitsit ametametame consectet adi eliteli sedseds dodododo, ei tempo incid ututututututut labore e doloredol ma aliqu lor ipsumipsu d sitsitsitsitsitsi ametametame.",
+       "tone": "muted"
+      }
+     ],
+     "style": "small"
+    }
+   ]
+  },
+  {
+   "kind": "panel",
+   "variant": "story",
+   "blocks": [
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremloreml ipsum dolord sitsit ameta consecteturc adipisc eliteli. Sedsedse dododo eiusmodeiu te incidid ututu. Laborel etete do magnama aliquaaliquaa l ipsumipsumips – dolordo sitsit am consecteturc a elitelitelit sedsedse, dododo eiusmod tempor incidi utututututu l etete dolo magnamagnama al loremlor ipsumi dolord. S ametam consect ad elitelit sedse dodod eiusmodeius t incidid utututut labore etet doloredol magnam aliquaaliq loremlo ipsumip. Dolor sitsitsi ametam consec (adipiscin elitel sedsedsed, dododod eiusmod tempo incididuntin utututu). Labore etete do magnamagna aliquaa loremloreml, ipsumipsu, dolordo s ametametame consecte adi elitelitelit sedsedsed dodododo. Eiusmo tempo inci utututut laborel etetete doloredo magnamagnam al loremlo ipsumips; dolo sitsi am consect adipisc e sedsedsed."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "task",
+   "number": 3,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Lor ip dolord sitsits ameta consecte adipisc e sedseds dododododod eiusm tempo?"
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "options",
+     "columns": 1,
+     "items": [
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlo ipsumi dolordolo sitsitsitsit ametametam c adipi elitelitelit se dodo eiusmo, tem incidi ututututu la etetetet dolored m aliquaal loremlo ips dolor sitsits ametame consect."
+        }
+       ],
+       "correct": true
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml ipsumipsu dolord sitsi amet consectet a elitelite sedsedseds dodod eiusmode temport in utututut laborelaborela etetetete."
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlo ipsumi dolordolor sit ametameta consect a elitelite sedsedsedse, dododo ei tempor incid utututu labore etetetetete doloredolor magnama."
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Lorem ipsumipsumi dolordolo s ametamet consectetu adi el sedsed dododod; eiusm temp incidid utututu laborel etetetetetete doloredolored."
+        }
+       ],
+       "correct": false
+      }
+     ],
+     "reveal": true
+    },
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremloreml: ",
+       "bold": true,
+       "tone": "muted"
+      },
+      {
+       "kind": "text",
+       "text": "Loremlo ipsumi do sitsitsitsit a consecteturc adipisci e sedsedsed do eius temportem incidi, ututut la etetet doloredol magnamagn aliquaa loremlore i dolordolord sit ameta consect adipis eliteli sedsedsedse dododod.",
+       "tone": "muted"
+      }
+     ],
+     "style": "small"
+    }
+   ]
+  },
+  {
+   "kind": "panel",
+   "variant": "story",
+   "blocks": [
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlorem ipsumipsu dolordolord sitsitsitsit ametameta co adipiscing (eliteliteli sedsed). Dododododo eiusmo te incidid ut laborelabo etetetetet, dolore mag aliquaaliq loremloreml ipsumipsu dolordolordo sitsit ametamet. Cons adipi eliteliteli sedseds dodod (eiusmo temporte i utututututut laborelab) e doloredolor magna aliqua lorem (ipsumipsum dolor)."
+      }
+     ]
+    },
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "L ipsumips dolord sitsits am co adipiscin elitel sedsedse dodododod eiusmode. T inci ut l etet doloredolore magnam aliquaali Loreml ipsumip. Dol sitsitsits ametametam co adipiscing eli sedsedseds dodod, eiu tempo incidi ututut labore."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "task",
+   "number": 4,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Lo ipsumip dolordolord s ametametamet conse adipi, eli se dododod eiusmode temporte incididunti ututututu l ete doloredol ma aliquaa Loreml ipsumip:"
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "options",
+     "columns": 1,
+     "items": [
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlor ipsumips dolordolord sitsitsit am 3 (Consect, Adipisci e Sedsedseds dodo) e Tempor incidid utut laborel etetetet dolore m aliquaal loreml."
+        }
+       ],
+       "correct": true
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlor ipsumips dolordolord sitsitsit am 4, consect Adipis eliteli sedseds dododod eiusmod temport inc ututut laborelabore etetet."
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlor ipsumips dolordolord sitsitsit am 7, consect adipis eliteli sedse dododo eiusmodei tempor incidid Utututu l Etetetet."
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlor ipsumips dolordolord sitsitsit am 1 (con Adipisc elit) s Dododo eiusmod temportemp incidid ututu Laborelabo etet."
+        }
+       ],
+       "correct": false
+      }
+     ],
+     "reveal": true
+    },
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremloreml: ",
+       "bold": true,
+       "tone": "muted"
+      },
+      {
+       "kind": "text",
+       "text": "Loremlore ipsumips do sitsi ametam consec adipiscing 3 eliteli sedse (Dododod eius, Temporte inci, Ututututut labo). Etetet dolored ma aliquaali lorem ipsumipsumip dolord, si ameta consecteturco adipiscin elitelit sedsed (dododod) eiusm, tem incidid utututututu.",
+       "tone": "muted"
+      }
+     ],
+     "style": "small"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1513 @@
+{
+ "version": 1,
+ "locale": "cs",
+ "kind": "lesson",
+ "title": "Loreml ipsumip, dolordo sitsi a consect",
+ "footer": {
+  "left": "Loreml ipsumip, dolordo sitsi a consect",
+  "pageNumbers": true,
+  "pageNumberFormat": "Strana {page} / {pages}"
+ },
+ "watermark": {
+  "image": {
+   "mime": "image/png",
+   "alt": "Loremlo",
+   "data": "iVBORw0KGgoAAAANSUhEUgAAAEsAAAAPCAIAAAAj5aXHAAAAMUlEQVR4nO3RAQ0AAAzCMPwrQ9ZVPM+eVQFk6Xfpdz7ksyGfDflsyGdDPhvy5XrAugECsE1PSVY/zAAAAABJRU5ErkJggg=="
+  },
+  "widthMm": 22
+ },
+ "blocks": [
+  {
+   "kind": "heading",
+   "level": 1,
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loreml ipsumip, dolordo sitsi a consect"
+    }
+   ],
+   "kicker": "Loremlor ip dolord  ·  Sitsitsi  ·  A. consec",
+   "meta": "45 lor"
+  },
+  {
+   "kind": "facts",
+   "rows": [
+    {
+     "label": "Lore ipsumi",
+     "blocks": [
+      {
+       "kind": "list",
+       "ordered": false,
+       "items": [
+        {
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lor ipsumip dolordolord sit ametame co adipiscing elitelit sedse d eiusmodeiu t incididu ututut laborelab etetet dol magnama a loremlo ipsumipsum."
+          }
+         ]
+        },
+        {
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lor ipsumi dolordolord sitsitsitsi a consectet adipisc eli sedsedse dododo e temport inci ututututut, laborelabo e doloredolo."
+          }
+         ]
+        },
+        {
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lor ipsumips dolordol sitsit ametame co adipisci elitel s dodododo eiusmodeius tempor in ututu labor (e doloredolore mag aliqua l ipsumipsu dolor)."
+          }
+         ]
+        }
+       ],
+       "tight": true
+      }
+     ]
+    },
+    {
+     "label": "Loreml ipsumi",
+     "blocks": [
+      {
+       "kind": "table",
+       "rows": [
+        [
+         {
+          "blocks": [
+           {
+            "kind": "paragraph",
+            "content": [
+             {
+              "kind": "text",
+              "text": "Loremlo",
+              "bold": true
+             }
+            ]
+           }
+          ],
+          "vAlign": "top"
+         },
+         {
+          "blocks": [
+           {
+            "kind": "paragraph",
+            "content": [
+             {
+              "kind": "text",
+              "text": "Loremlor ipsumip dolordolordo sitsitsi, ametameta cons a elite sedsed d eiusmo temportempo incidid utututut l etetete dolore m aliquaa."
+             }
+            ]
+           }
+          ]
+         },
+         {
+          "blocks": [
+           {
+            "kind": "paragraph",
+            "content": [
+             {
+              "kind": "text",
+              "text": "8 lor",
+              "tone": "muted"
+             }
+            ]
+           }
+          ],
+          "align": "right"
+         }
+        ],
+        [
+         {
+          "blocks": [
+           {
+            "kind": "paragraph",
+            "content": [
+             {
+              "kind": "text",
+              "text": "Loremlore",
+              "bold": true
+             }
+            ]
+           }
+          ],
+          "vAlign": "top"
+         },
+         {
+          "blocks": [
+           {
+            "kind": "paragraph",
+            "content": [
+             {
+              "kind": "text",
+              "text": "Loreml ipsumips dolordolo: sitsitsi ametam consec a eliteli s dododod eiusmode temportem, incididunti utututut labo etetete d magnamagnamagn aliqua lo ipsumips 10 %."
+             }
+            ]
+           }
+          ]
+         },
+         {
+          "blocks": [
+           {
+            "kind": "paragraph",
+            "content": [
+             {
+              "kind": "text",
+              "text": "30 lor",
+              "tone": "muted"
+             }
+            ]
+           }
+          ],
+          "align": "right"
+         }
+        ],
+        [
+         {
+          "blocks": [
+           {
+            "kind": "paragraph",
+            "content": [
+             {
+              "kind": "text",
+              "text": "Loremlo",
+              "bold": true
+             }
+            ]
+           }
+          ],
+          "vAlign": "top"
+         },
+         {
+          "blocks": [
+           {
+            "kind": "paragraph",
+            "content": [
+             {
+              "kind": "text",
+              "text": "Loremlore ipsumip dolordolo sitsit Ametam Conse (5–7 adi) e sedsedse dododododod, eiu te incididu utututu lab etetetete do magnama aliqua."
+             }
+            ]
+           }
+          ]
+         },
+         {
+          "blocks": [
+           {
+            "kind": "paragraph",
+            "content": [
+             {
+              "kind": "text",
+              "text": "7 lor",
+              "tone": "muted"
+             }
+            ]
+           }
+          ],
+          "align": "right"
+         }
+        ]
+       ],
+       "columns": [
+        2.2,
+        8,
+        1.4
+       ],
+       "style": "plain",
+       "dense": true
+      }
+     ]
+    },
+    {
+     "label": "Loremlo",
+     "blocks": [
+      {
+       "kind": "paragraph",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlore ip dolordol sitsitsi, ametametam / consecte adipi eli sedseds dodododododod eiusm, temportemp incid ut laborelab etetetet d Magnam Aliqu (loremlor ipsumips dolord)."
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "label": "Lor Ips",
+     "blocks": [
+      {
+       "kind": "paragraph",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlor i dolordo sitsitsit: Ame consect adipisci elit sedseds d eiusmode tempo i utututut l etetete doloredolore magnamagna aliquaaliq loremlo."
+        }
+       ],
+       "style": "small"
+      },
+      {
+       "kind": "paragraph",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremloremlo ipsum (dolordolordolo sitsit):"
+        }
+       ],
+       "style": "small"
+      },
+      {
+       "kind": "paragraph",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml: Ipsumipsumi d sitsits ametame cons adipiscinga elitelit sedsed, dodo eiusmode, temportem, incididuntin utututu."
+        }
+       ],
+       "style": "small"
+      },
+      {
+       "kind": "paragraph",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml: Ipsum dolordolo sitsits, ametametame con a elitelit sedseds do eiusm temportem incid (2. ututututututut labor)."
+        }
+       ],
+       "style": "small"
+      },
+      {
+       "kind": "paragraph",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlo / Ipsumips: Dolordol sitsitsi ametam, cons adipiscinga e sedsedsed dodododod eiusm te incididunt ututu."
+        }
+       ],
+       "style": "small"
+      },
+      {
+       "kind": "paragraph",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlo ipsumips (dolordolord / sitsitsitsitsi / ametam / consecte): Adipiscinga elitelite sedsedsed do. eiusmodei tempor, incididu ututu, laborelab etetetetete dolore m aliquaaliqua."
+        }
+       ],
+       "style": "small"
+      },
+      {
+       "kind": "paragraph",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlorem ipsum (dolordolordolord sitsitsit):"
+        }
+       ],
+       "style": "small"
+      },
+      {
+       "kind": "paragraph",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlore ipsum (Do s amet Co): Adipisci elite sedsed, dododo eiusmodei t incididun ututu (laborelabor, etetetetetet), doloredolo magnamag aliquaa."
+        }
+       ],
+       "style": "small"
+      },
+      {
+       "kind": "paragraph",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremloreml ipsum (dolor sitsits / ametam): Consecte adipiscingadipi elitelit, sedsedsedsedse dodod eiusmod tempo (incid, ututut), laborelabo etetet d magnamagnam a loremlo."
+        }
+       ],
+       "style": "small"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "image",
+   "image": {
+    "mime": "image/png",
+    "alt": "Loreml ipsumipsumip dolordolord sit ametame co adipisci elite s dodododo eiusmod tempo i ututututut labo etetetetet, doloredolo m aliquaaliq.",
+    "maxWidth": 0.9,
+    "maxHeightMm": 95,
+    "data": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAYElEQVR4nO3RAQkAAAjAMPsnM5YxhvA1OJ99bva5ArQOaB3QOqB1QOuA1gGtA1oHtA5oHdA6oHVA64DWAa0DWge0Dmgd0DqgdUDrgNYBrQNaB7QOaB3QOqB1QOuA1oHFDjWrgiy4C+TBAAAAAElFTkSuQmCC"
+   },
+   "align": "center"
+  },
+  {
+   "kind": "heading",
+   "level": 2,
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loremlo"
+    }
+   ],
+   "meta": "8 lor"
+  },
+  {
+   "kind": "heading",
+   "level": 3,
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loremlor ipsumipsu, dol s ametameta consec"
+    }
+   ],
+   "meta": "8 lor"
+  },
+  {
+   "kind": "paragraph",
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loremlorem ipsumips dolordolo s ametamet, consecte ad e sedse dododo e temporte in, u labo etet dolo magnamag a lorem.",
+     "bold": true
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "ordered": true,
+   "items": [
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlore ipsumip (Dolord sitsitsitsit ametamet):",
+       "bold": true
+      },
+      {
+       "kind": "text",
+       "text": "Lore 1960 ipsumip Dolor Sitsits am consectetu adipisci elitelit, sedse do e temportemp incididun. Ut labo 1972 etete dolored magnama, a loreml ipsumips dolor sitsitsits."
+      }
+     ],
+     "number": 1
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "ordered": false,
+   "items": [
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Lore ipsumi dolordo sitsitsi ameta (cons, adip elitelit, sedsed)?"
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Lo ipsu dolord sitsit ametame c adipi e seds do eiusmode temportem incidi ut Labore?"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "ordered": true,
+   "items": [
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Lorem ipsumip dolo sitsi:",
+       "bold": true
+      }
+     ],
+     "number": 2
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "ordered": false,
+   "items": [
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "„Lore ipsumipsu, dolo si ameta co Adip elit s dodododod eiusm, temport incidid ututut laborelabor etetet do Magnam, a loremlore, ipsu do sitsits ametamet consecte adipisc eli sedsed dododo.“",
+       "italic": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "ordered": true,
+   "items": [
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "L ipsu do si a consec a elite seds?",
+       "bold": true
+      }
+     ],
+     "number": 3
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "ordered": false,
+   "items": [
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Lore ip dolo s ametame consec adi elite:",
+       "bold": true
+      },
+      {
+       "kind": "text",
+       "text": " Loremlore ipsumi dolordol sitsitsi ametamet consect ad elitel – 90 % se dododo eius temport incid ututut."
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremloremlo i dolordolo sitsit:",
+       "bold": true
+      },
+      {
+       "kind": "text",
+       "text": " Loremlo ipsumipsum d sitsitsit ameta co adip eli sedsedseds dododo."
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlor ipsumipsu:",
+       "bold": true
+      },
+      {
+       "kind": "text",
+       "text": " Lore ipsumi dolo s ametameta conse adipisci elitelite sedsed d eiusmodei."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "panel",
+   "variant": "tip",
+   "label": "Lor",
+   "blocks": [
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlo Ips (dolordolor sits) a Con:",
+       "bold": true
+      }
+     ]
+    },
+    {
+     "kind": "list",
+     "ordered": false,
+     "items": [
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Lorem ipsumipsu dolor si ametam c adipisci elitel: "
+        },
+        {
+         "kind": "text",
+         "text": "loremlo = ipsu dolor",
+         "italic": true
+        },
+        {
+         "kind": "text",
+         "text": "; "
+        },
+        {
+         "kind": "text",
+         "text": "lor ipsumip = dolordolord sitsi",
+         "italic": true
+        },
+        {
+         "kind": "text",
+         "text": "; "
+        },
+        {
+         "kind": "text",
+         "text": "loremlo = ipsum dolordol sitsi",
+         "italic": true
+        },
+        {
+         "kind": "text",
+         "text": "."
+        }
+       ]
+      },
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml ipsumip do sitsitsi am consec: adipis elit (sedse) do. eiusm tempo incid (utututu)."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "panel",
+   "variant": "solution",
+   "label": "Loreml",
+   "blocks": [
+    {
+     "kind": "list",
+     "ordered": true,
+     "items": [
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Lorem ipsumi d sitsitsit ameta: consectetur adipiscingad El2 s dodododo E2, temport i utututu labore etetet dolo."
+        }
+       ],
+       "number": 1
+      },
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlo ipsumi dolordolor s ameta – consectet ad el sedse dododododo eiu, tempo in ututu labor etetet dolore."
+        }
+       ],
+       "number": 2
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "heading",
+   "level": 2,
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loremlore"
+    }
+   ],
+   "meta": "30 lor"
+  },
+  {
+   "kind": "heading",
+   "level": 3,
+   "content": [
+    {
+     "kind": "text",
+     "text": "1. lore: Ipsumipsumi, dolordo s ametam conse"
+    }
+   ],
+   "meta": "15 lor"
+  },
+  {
+   "kind": "paragraph",
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loremlor ipsumipsumi d sitsitsi a co adipiscin elitelit sedsedsed do eiusmod temporte incidi u laborel.",
+     "bold": true
+    }
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "content": [
+    {
+     "kind": "text",
+     "text": "L. Ipsumip dolordolo sitsi ametame (5 con):",
+     "bold": true
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "ordered": false,
+   "items": [
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremloreml (ipsumipsum): "
+      },
+      {
+       "kind": "math",
+       "tex": "6\\,\\text{CO}_2 + 6\\,\\text{H}_2\\text{O} + \\text{světlo} \\rightarrow \\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\,\\text{O}_2",
+       "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mn>6</mn><mtext> </mtext><msub><mtext>CO</mtext><mn>2</mn></msub><mo>+</mo><mn>6</mn><mtext> </mtext><msub><mtext>H</mtext><mn>2</mn></msub><mtext>O</mtext><mo>+</mo><mrow><mtext>sv</mtext><mover accent=\"true\"><mtext>e</mtext><mo>ˇ</mo></mover><mtext>tlo</mtext></mrow><mo>→</mo><msub><mtext>C</mtext><mn>6</mn></msub><msub><mtext>H</mtext><mn>12</mn></msub><msub><mtext>O</mtext><mn>6</mn></msub><mo>+</mo><mn>6</mn><mtext> </mtext><msub><mtext>O</mtext><mn>2</mn></msub></mrow></math>"
+      },
+      {
+       "kind": "text",
+       "text": " (loreml ipsum d sitsits)."
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlo ipsumip (dolordo): "
+      },
+      {
+       "kind": "math",
+       "tex": "\\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\,\\text{O}_2 \\rightarrow 6\\,\\text{CO}_2 + 6\\,\\text{H}_2\\text{O} + \\text{energie}",
+       "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><msub><mtext>C</mtext><mn>6</mn></msub><msub><mtext>H</mtext><mn>12</mn></msub><msub><mtext>O</mtext><mn>6</mn></msub><mo>+</mo><mn>6</mn><mtext> </mtext><msub><mtext>O</mtext><mn>2</mn></msub><mo>→</mo><mn>6</mn><mtext> </mtext><msub><mtext>CO</mtext><mn>2</mn></msub><mo>+</mo><mn>6</mn><mtext> </mtext><msub><mtext>H</mtext><mn>2</mn></msub><mtext>O</mtext><mo>+</mo><mtext>energie</mtext></mrow></math>"
+      },
+      {
+       "kind": "text",
+       "text": " (loremlor ipsumip dol sitsi)."
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlo ipsu dolordolor (sitsitsi, ameta): con adip el sedse dododo eiusmo temport i utututu labore."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loremlore ipsumipsu dolor sit amet (consecte / ad elitel):",
+     "bold": true
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "ordered": false,
+   "items": [
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlorem (ipsumip):",
+       "bold": true
+      },
+      {
+       "kind": "text",
+       "text": " Loreml ipsumips d sits. Am consectetu adipis, elit s "
+      },
+      {
+       "kind": "math",
+       "tex": "\\text{CO}_2",
+       "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><msub><mtext>CO</mtext><mn>2</mn></msub></mrow></math>"
+      },
+      {
+       "kind": "text",
+       "text": " loremlor ipsumipsumip dolord (sitsi) a consec."
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlorem (ipsumipsumip):",
+       "bold": true
+      },
+      {
+       "kind": "text",
+       "text": " Loremloreml. Ipsumipsu do sitsit ametame cons, adipis elit seds dodododod (eiusmodeiu, temportemp)."
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlorem / Ipsumipsum (dolordol sits):",
+       "bold": true
+      },
+      {
+       "kind": "text",
+       "text": " Lorem ipsumips d sitsi. Ametametam conse adip e sedseds dodododo e "
+      },
+      {
+       "kind": "math",
+       "tex": "\\text{CO}_2",
+       "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><msub><mtext>CO</mtext><mn>2</mn></msub></mrow></math>"
+      },
+      {
+       "kind": "text",
+       "text": " lore ip dolordo."
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlo:",
+       "bold": true
+      },
+      {
+       "kind": "text",
+       "text": " Loremlo ipsumips dolordolo sitsi (ame) consec adipiscin."
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlor ipsumi:",
+       "bold": true
+      },
+      {
+       "kind": "text",
+       "text": " Lorem i dolordolo sitsits (ame cons adipis e sedse dododod ei tempo)."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "content": [
+    {
+     "kind": "text",
+     "text": "L. Ipsumip dolor / sitsi am consectet a elitelite sedsedseds (10 dod):",
+     "bold": true
+    },
+    {
+     "kind": "text",
+     "text": "Lore ipsumips dolo sits a cons a elitelite sedsed dodododo:"
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "ordered": true,
+   "items": [
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Lor ipsumipsu dolor sitsit am consect ad elitel sed?"
+      }
+     ],
+     "number": 1
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Lor ipsum "
+      },
+      {
+       "kind": "math",
+       "tex": "\\text{CO}_2",
+       "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><msub><mtext>CO</mtext><mn>2</mn></msub></mrow></math>"
+      },
+      {
+       "kind": "text",
+       "text": " lore ip dolordo?"
+      }
+     ],
+     "number": 2
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Lo ip do sitsi, ameta consecte adipisc elite sedsedse d eiusm?"
+      }
+     ],
+     "number": 3
+    }
+   ]
+  },
+  {
+   "kind": "panel",
+   "variant": "important",
+   "label": "Loremlor",
+   "blocks": [
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlor ipsumipsum d sitsitsitsit amet (Con):",
+       "bold": true
+      }
+     ]
+    },
+    {
+     "kind": "list",
+     "ordered": false,
+     "items": [
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml ipsumipsum d sitsi a Con a eliteli sedsedsed do eiusmodeius temportem: "
+        },
+        {
+         "kind": "text",
+         "text": "„Lore ip, dol sitsit ametam (conse) a eli se dodod (eiusm t incid). Ut labore etetetet d magn?“",
+         "italic": true
+        }
+       ]
+      },
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlo ipsumi dolordo (sitsi a consec ad elitelite sedsedseds)."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "panel",
+   "variant": "solution",
+   "label": "Loreml",
+   "blocks": [
+    {
+     "kind": "list",
+     "ordered": true,
+     "items": [
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlorem (ipsumi dolordol, sits) ametametamet."
+        }
+       ],
+       "number": 1
+      },
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlo ipsu dolordolo (sitsitsi, ametametame c adipiscing) elitelit sedsedse."
+        }
+       ],
+       "number": 2
+      },
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlor ip do sitsits: ametamet cons ad el sedsedsed, dododo ei tempo In2 utu laborela."
+        }
+       ],
+       "number": 3
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "heading",
+   "level": 3,
+   "content": [
+    {
+     "kind": "text",
+     "text": "2. lore: Ips dolordo s ametamet 10 %"
+    }
+   ],
+   "meta": "15 lor"
+  },
+  {
+   "kind": "paragraph",
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loremloreml ipsumipsumi dolord sits ameta consecte adipisci e sedseds dododododododo eiusm tempo incid.",
+     "bold": true
+    }
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "content": [
+    {
+     "kind": "text",
+     "text": "L. Ipsumipsu dolor (5 sit):",
+     "bold": true
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "ordered": false,
+   "items": [
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlo ipsumi d sitsi, ame consectetur: Adipis "
+      },
+      {
+       "kind": "math",
+       "tex": "\\rightarrow",
+       "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mo>→</mo></mrow></math>"
+      },
+      {
+       "kind": "text",
+       "text": " Loremlorem "
+      },
+      {
+       "kind": "math",
+       "tex": "\\rightarrow",
+       "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mo>→</mo></mrow></math>"
+      },
+      {
+       "kind": "text",
+       "text": " Loremlorem "
+      },
+      {
+       "kind": "math",
+       "tex": "\\rightarrow",
+       "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mo>→</mo></mrow></math>"
+      },
+      {
+       "kind": "text",
+       "text": " Loremlorem."
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlor 10 %:",
+       "bold": true
+      },
+      {
+       "kind": "text",
+       "text": " Lorem ips 10 % dolordo sitsits ametamet co adipisc elite. Sedsed 90 % dododododo eiusmodeiu te inci ututu, laborel e dolore magn aliquaa "
+      },
+      {
+       "kind": "text",
+       "text": "lorem",
+       "bold": true
+      },
+      {
+       "kind": "text",
+       "text": "."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "content": [
+    {
+     "kind": "text",
+     "text": "L. Ipsumipsumips dolordolor sitsi / ametame (10 con):",
+     "bold": true
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "ordered": false,
+   "items": [
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlor I (Dolord sitsi / ametameta conse):",
+       "bold": true
+      }
+     ],
+     "children": [
+      {
+       "kind": "list",
+       "ordered": false,
+       "items": [
+        {
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor ipsumi dolo s 1 000 am consectetur adipis. Elite se dodododo eius tempor incid? (Utututu: lab 100 et)."
+          }
+         ]
+        },
+        {
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lore i 1 dolordo sits ametame consectet adip elit sedsedseds dodod e temport inc ututut laborela etetete?"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlor I (Dolordolo sitsi / ametametam conse):",
+       "bold": true
+      }
+     ],
+     "children": [
+      {
+       "kind": "list",
+       "ordered": false,
+       "items": [
+        {
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlo ip dolor sitsits "
+          },
+          {
+           "kind": "math",
+           "tex": "10\\,000\\,\\text{kJ}",
+           "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mn>10</mn><mtext> </mtext><mn>000</mn><mtext> </mtext><mtext>kJ</mtext></mrow></math>"
+          },
+          {
+           "kind": "text",
+           "text": " loremlo. Ipsumipsumi dolordo sit ametame (consecte adipiscin), elitelit (sedsedseds) d eius (temportem)."
+          }
+         ]
+        },
+        {
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lorem ipsumip do sitsit amet conse ad elitelite?"
+          }
+         ]
+        },
+        {
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlorem ipsumi 2. dolordolordolord sitsit, amet consecte adipisc eliteli sed 10 dodod."
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "panel",
+   "variant": "tip",
+   "label": "Lor",
+   "blocks": [
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremloremlo i Dol:",
+       "bold": true
+      }
+     ]
+    },
+    {
+     "kind": "list",
+     "ordered": false,
+     "items": [
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Lore ip Dol / sitsitsits ametam consect a elitelitelit sedsedse dodododod e temportempo (inci 10)."
+        }
+       ]
+      },
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlore ipsu dolo sitsi: "
+        },
+        {
+         "kind": "text",
+         "text": "Lore ip dolord sitsitsi ametame (consecteturc",
+         "italic": true
+        },
+        {
+         "kind": "text",
+         "text": " "
+        },
+        {
+         "kind": "math",
+         "tex": "\\rightarrow",
+         "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mo>→</mo></mrow></math>"
+        },
+        {
+         "kind": "text",
+         "text": " "
+        },
+        {
+         "kind": "text",
+         "text": "loremloreml",
+         "italic": true
+        },
+        {
+         "kind": "text",
+         "text": " "
+        },
+        {
+         "kind": "math",
+         "tex": "\\rightarrow",
+         "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mo>→</mo></mrow></math>"
+        },
+        {
+         "kind": "text",
+         "text": " "
+        },
+        {
+         "kind": "text",
+         "text": "lorem",
+         "italic": true
+        },
+        {
+         "kind": "text",
+         "text": " "
+        },
+        {
+         "kind": "math",
+         "tex": "\\rightarrow",
+         "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mo>→</mo></mrow></math>"
+        },
+        {
+         "kind": "text",
+         "text": " "
+        },
+        {
+         "kind": "text",
+         "text": "loremlo",
+         "italic": true
+        },
+        {
+         "kind": "text",
+         "text": " "
+        },
+        {
+         "kind": "math",
+         "tex": "\\rightarrow",
+         "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mo>→</mo></mrow></math>"
+        },
+        {
+         "kind": "text",
+         "text": " "
+        },
+        {
+         "kind": "text",
+         "text": "lorem) ipsumipsumi dolordol sitsitsits?",
+         "italic": true
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "panel",
+   "variant": "solution",
+   "label": "Loreml",
+   "blocks": [
+    {
+     "kind": "list",
+     "ordered": false,
+     "items": [
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Lore: Ips 100 do sits. Am consectet adipis elit se 1. dodododod eiusm (100 % temport), inc ututututu labo etetetet 90 % dolored magn aliquaaliq loremloremlor ipsumip."
+        }
+       ]
+      },
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlore: Ipsumip = 1 000 do, sitsitsi = 100 am, cons = 10 ad. Elitel 9 990 se do eiusmode temp incid (99,9 % ututut). La 5. e dolor magna al loremlo ipsumips dolordo s ametame consecteturco adipisci."
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "gallery",
+   "images": [
+    {
+     "mime": "image/png",
+     "caption": "Loremlor ipsumi d sitsitsitsi ame consect a elitelitel",
+     "data": "iVBORw0KGgoAAAANSUhEUgAAAEEAAAAnCAIAAADfOLJVAAAATUlEQVR4nO3RAQkAMBDEsPev7GXNxGAZNAru6Oz/Zv/XB0MdDHUw1MFQB0MdDHUw1MFQB0MdDHUw1MFQB0MdDHUw1MFQB0MdDPN6wAUHwyk2wkKjLWIAAAAASUVORK5CYII="
+    }
+   ]
+  },
+  {
+   "kind": "image",
+   "image": {
+    "mime": "image/png",
+    "alt": "Loremlo ipsumips dolord s ametame c adipisci elitelitelit sedsedsedse, dododod eiusmodei, temport i ututututu.",
+    "maxWidth": 0.9,
+    "maxHeightMm": 95,
+    "data": "iVBORw0KGgoAAAANSUhEUgAAAEAAAAAqCAIAAACMZMq1AAAASUlEQVR4nO3RAQkAAAjAMPsnM5YxhvA1OJ99bva5ArQOaB3QOqB1QOuA1gGtA1oHtA5oHdA6oHVA64DWAa0DWge0Dmgd0Dqw2AHBNp1p4dM3hgAAAABJRU5ErkJggg=="
+   },
+   "align": "center"
+  },
+  {
+   "kind": "heading",
+   "level": 2,
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loremlo"
+    }
+   ],
+   "meta": "7 lor"
+  },
+  {
+   "kind": "heading",
+   "level": 3,
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loremlo i Dolord Sitsi a consectetu adip"
+    }
+   ],
+   "meta": "7 lor"
+  },
+  {
+   "kind": "paragraph",
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loremlo ipsumips dolordol s ametamet consectet, adi elit sedseds dod eiusmodei te incidid ututut.",
+     "bold": true
+    }
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "content": [
+    {
+     "kind": "text",
+     "text": "1. Loreml ipsumip dolordolo (Sitsit Ameta / consec ad elite – 5 sed):",
+     "bold": true
+    },
+    {
+     "kind": "text",
+     "text": "Lore ipsumip dolor s ametam (Co adi el sedsed) dodo eiusmo tempor i 3 ututututu laborela:"
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "ordered": true,
+   "items": [
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Lorem ipsumi dolordolor sitsitsit a consectet adipi e sedse dodod eius?",
+       "italic": true
+      },
+      {
+       "kind": "text",
+       "text": " (Loremlo: Ipsum d sitsi, ametame conse adip eliteli sedse)"
+      }
+     ],
+     "number": 1
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Lorem ipsumip dolordo sitsit ametamet c adipiscinga elitel se dodo eiusmodeiu?",
+       "italic": true
+      },
+      {
+       "kind": "text",
+       "text": " (Loremlo: ips 10 %)"
+      }
+     ],
+     "number": 2
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Lo ip dolordo sitsit ametame consecte a eli s dodododo eiusmo?",
+       "italic": true
+      },
+      {
+       "kind": "text",
+       "text": " (Loremlo: Ipsumips dolordol sits a consec Ad2 el sedsedsed)"
+      }
+     ],
+     "number": 3
+    }
+   ]
+  },
+  {
+   "kind": "paragraph",
+   "content": [
+    {
+     "kind": "text",
+     "text": "2. Loreml i dolo sitsit a consectetur (2 adi):",
+     "bold": true
+    }
+   ]
+  },
+  {
+   "kind": "list",
+   "ordered": false,
+   "items": [
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loreml ipsumips dol s ameta: "
+      },
+      {
+       "kind": "text",
+       "text": "„Loremlor ipsumipsu dolord sits ameta consect a elitelite sedse d eius, temp in ut laborel etet dolore?“",
+       "italic": true
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlore ipsumi (dolordolordol sits):",
+       "bold": true
+      },
+      {
+       "kind": "text",
+       "text": " Lorem ipsumi (dolordo s amet consectet) / adipiscin (elitelite se dodod eiusmo temport) / inci (utu l ete dolore)."
+      }
+     ]
+    },
+    {
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlor 1–2 ipsu (dolord sitsit ametame Con): adipisc elitel sedse."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "panel",
+   "variant": "tip",
+   "label": "Lor",
+   "blocks": [
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlo Ips d sitsits:",
+       "bold": true
+      },
+      {
+       "kind": "text",
+       "text": " Loreml Ipsum do sitsit ametametame consectet a elitelite sedsed (D/E/T) i utututututut laborel, ete dolore magnamagn aliquaa loremlor ipsumipsu."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "panel",
+   "variant": "solution",
+   "label": "Loreml",
+   "blocks": [
+    {
+     "kind": "list",
+     "ordered": true,
+     "items": [
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Lorem ipsumi d sitsitsit ameta, consect adip eliteliteli s dodododod ei tempo."
+        }
+       ],
+       "number": 1
+      },
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "10 % (90 % lo ipsumi)."
+        }
+       ],
+       "number": 2
+      },
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremloremlo / ipsumip dolordolo sitsi am consectetur Ad2 eli sedse dododododod."
+        }
+       ],
+       "number": 3
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "image",
+   "image": {
+    "mime": "image/png",
+    "alt": "Loremlor ipsumips dolordo sitsitsit ametametam consec adipiscing eliteli se dodod eiusm temporte incidi u laborela etetetete dolor.",
+    "maxWidth": 0.9,
+    "maxHeightMm": 95,
+    "data": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAYElEQVR4nO3RAQkAAAjAMPsnM5YxhvA1OJ99bva5ArQOaB3QOqB1QOuA1gGtA1oHtA5oHdA6oHVA64DWAa0DWge0Dmgd0DqgdUDrgNYBrQNaB7QOaB3QOqB1QOuA1oHFDjWrgiy4C+TBAAAAAElFTkSuQmCC"
+   },
+   "align": "center"
+  }
+ ]
+}

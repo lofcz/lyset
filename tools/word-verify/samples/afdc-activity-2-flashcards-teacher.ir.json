@@ -1,0 +1,1052 @@
+{
+ "version": 1,
+ "locale": "cs",
+ "kind": "activity",
+ "title": "Loremloreml ipsumips dolo",
+ "footer": {
+  "left": "Loremloreml ipsumips dolo  ·  Sitsit",
+  "pageNumbers": true,
+  "pageNumberFormat": "Strana {page} / {pages}"
+ },
+ "watermark": {
+  "image": {
+   "mime": "image/png",
+   "alt": "Loremlo",
+   "data": "iVBORw0KGgoAAAANSUhEUgAAAEsAAAAPCAIAAAAj5aXHAAAAMUlEQVR4nO3RAQ0AAAzCMPwrQ9ZVPM+eVQFk6Xfpdz7ksyGfDflsyGdDPhvy5XrAugECsE1PSVY/zAAAAABJRU5ErkJggg=="
+  },
+  "widthMm": 22
+ },
+ "blocks": [
+  {
+   "kind": "heading",
+   "level": 1,
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loremloreml ipsumips dolo"
+    }
+   ],
+   "kicker": "Loremlor  ·  Ipsumi"
+  },
+  {
+   "kind": "paragraph",
+   "content": [
+    {
+     "kind": "text",
+     "text": "Loremlor ip dolor sits ametam co adipis elitel sedsedse, dododod ei t incidi ututututut laborel e dolo magnamag aliqua lor ipsumips dolord sitsitsitsit ametametam."
+    }
+   ],
+   "style": "lead"
+  },
+  {
+   "kind": "rule",
+   "tone": "accent"
+  },
+  {
+   "kind": "cards",
+   "columns": 2,
+   "heightMm": 70,
+   "cut": true,
+   "items": [
+    {
+     "parts": [
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lo ip dolordolord sitsitsi amet?",
+           "bold": true
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor: ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Loremlore ip dol sit, am consectetu adipisc el sedsed do eiusmo t In.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      },
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremloremlor i dolordolor "
+          },
+          {
+           "kind": "text",
+           "text": "loremlo ipsumipsu dolordolor",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": ", lor ipsum dolordo s "
+          },
+          {
+           "kind": "text",
+           "text": "loremlorem ipsumips dolord",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": " (lore ipsumips d sitsits ameta)."
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lo ipsumi do sitsitsits ametametam conse adipiscing elitel sedseds dodod, eiu temport incididu ututu lab, etetetet doloredolored magnamagna aliq l ipsumipsum dolordolordol sitsitsit.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      }
+     ],
+     "badge": "1"
+    },
+    {
+     "parts": [
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "L ipsu dolord sit Amet?",
+           "bold": true
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor: ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Loremloremlo ipsumipsu dolo sitsits, amet conse adipi?",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      },
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "L "
+          },
+          {
+           "kind": "text",
+           "text": "loremloreml ipsumipsumi dolordolordo sitsitsits amet",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": " loremlo i dolo, s ame co adip elite."
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlo ipsumip ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Loremloremlor Ipsu Dolordo Sitsit",
+           "bold": true,
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": ". Loremlore ipsumipsum dolordo sitsitsi ametametametam consectetu adipis el sedse dodod e temport incidid ututututu.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      }
+     ],
+     "badge": "2"
+    },
+    {
+     "parts": [
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "L ipsumi dolor si ametam conse adip el sedseds Dodo?",
+           "bold": true
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor: ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Loreml ipsumip dolordolordo sits.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      },
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loreml ip do "
+          },
+          {
+           "kind": "text",
+           "text": "loremloremlo ipsu dolo",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": " (lore. Ip), "
+          },
+          {
+           "kind": "text",
+           "text": "2 loremloreml ipsumi",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": " l "
+          },
+          {
+           "kind": "text",
+           "text": "lorem ipsu",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": " (loreml ipsu dolor)."
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlore ipsumip dolordol sitsitsits ametamet consectetur adipis elitelite sedse dodod eius temportem incidi. Ututu Labo et dolore 24 magna.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      }
+     ],
+     "badge": "3"
+    },
+    {
+     "parts": [
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lo ipsumipsu dol Sitsi / Ame?",
+           "bold": true
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor: ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Lor = Ipsu Dolordolor Sits. Ametam consectet, adipis elit.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      },
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremloreml ipsumipsumips dol sitsi, ameta consect adip "
+          },
+          {
+           "kind": "text",
+           "text": "loreml ipsumi dolor",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": " l ipsumipsumi dolo Sitsi."
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlo Ips dolordo ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Lore Ipsumipsum Dolo",
+           "bold": true,
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": ". Lor ip 8 dolo 11 sitsi. Ameta 4 conse adipiscinga elitel sedsedsed dododod eiusm (temp. Inci utu Laborela etete).",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      }
+     ],
+     "badge": "4"
+    },
+    {
+     "parts": [
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lo ip do Sits ametam?",
+           "bold": true
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor: ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Lor i dolordol sitsitsi ametam c adipisci eli sedsedsed dodo.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      },
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor ipsumipsumips dolord s "
+          },
+          {
+           "kind": "text",
+           "text": "loreml (Ips)",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": " loremlore ipsu dolordo s ameta "
+          },
+          {
+           "kind": "text",
+           "text": "Loremlor ipsumip dol sitsit a consec",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": "."
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lore (*Ipsumi Dolo Sitsitsi Amet*) consecte adipisci elitel sedsed dododo eiusmo, temporte i ut laborela etetete dolo magna aliquaaliqua loreml.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      }
+     ],
+     "badge": "5"
+    },
+    {
+     "parts": [
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "L ipsu dolo sits ame consectetur Adip elitel?",
+           "bold": true
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor: ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Loreml ipsu dolor Sitsit Amet Consecte Adip.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      },
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor i "
+          },
+          {
+           "kind": "text",
+           "text": "loreml (Ips)",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": "."
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "L ipsu dolordol sitsit am cons Adip elitelit, sedsed d eius temp (inci. Utu, Lab etet Dol) magnam aliquaaliq lore Ipsu dolord s amet con adip elitelitel sedsedseds dododo (eiusmod Tempo).",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      }
+     ],
+     "badge": "6"
+    },
+    {
+     "parts": [
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lo ipsumip dolordolor sitsitsit Ame c adipiscing elitel?",
+           "bold": true
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor: ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Loremlor ipsum „dolor“ sitsits ametam cons adipisci.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      },
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor ipsu "
+          },
+          {
+           "kind": "text",
+           "text": "loremlore",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": " (*loreml*) – ipsumipsum dolor sitsitsi ame conse a elitelit sedsedse dod eiusm."
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlore Ips do sitsitsitsi ametametame consecte a el sedseds dod eiusmod Temp incidi. Utututut lab e doloredo magnam aliq lorem ipsumipsu dolord sitsitsitsitsitsi amet.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      }
+     ],
+     "badge": "7"
+    },
+    {
+     "parts": [
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lore ip dolord sits ametametamet consectetur Adi e Sed?",
+           "bold": true
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor: ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Loreml ip d sit, ame consect adipi elitelitel, seds do eiusmod temporte.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      },
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "L ipsumipsu "
+          },
+          {
+           "kind": "text",
+           "text": "Lor",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": " lorem ipsumip dolordol sitsitsits (ametamet), c adipiscin "
+          },
+          {
+           "kind": "text",
+           "text": "Lor",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": " lorem ipsumip dolordol sitsitsi (*ametametame*)."
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lor ipsum ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Lor",
+           "bold": true,
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": " loreml ipsumips dolo sitsitsitsi ametam consectet a elitelit sedsed. Dod ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Lor",
+           "bold": true,
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": " lo ipsumip dolordol sitsitsi ametame c adipiscin elitel, sedse dodododo eiusmo temp.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      }
+     ],
+     "badge": "8"
+    },
+    {
+     "parts": [
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lo ip do sitsits ametam?",
+           "bold": true
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor: ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Loremlo i dolordolo sitsits amet cons a elit.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      },
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loreml ipsumips dolord sitsitsit "
+          },
+          {
+           "kind": "text",
+           "text": "loremloreml ipsumip dolordol sitsi",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": " lore ipsumipsu dolordol sitsits a conse adip elitelitel sedsedsed."
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lorem ipsum dolordo sitsits ameta c adipisc 10 000 Eli se dododododo ei 3 tempor i ututut laborel etetet, dolor ma al l ipsumips do Sit ametamet consecte.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      }
+     ],
+     "badge": "9"
+    },
+    {
+     "parts": [
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lorem ipsu dolor si ametame con adipiscingadip elitel sedse d eiusmo t incidid ututututut labo?",
+           "bold": true
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor: ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Lorem ips dolo sits ametame, cons ad el sed dododo? E tem i ututut, labo etetet?",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      },
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lore "
+          },
+          {
+           "kind": "text",
+           "text": "loreml – ipsumi",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": "."
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lor ipsumipsumips dolordo si ametameta conse ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "loreml",
+           "bold": true,
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": ". Loremlo ipsumi dolo sits a conse adipisci, elite se dodo eius ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "loremlo",
+           "bold": true,
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": " (loremlo ipsu dolord, sitsi am con adipisc elit sedseds).",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      }
+     ],
+     "badge": "10"
+    },
+    {
+     "parts": [
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lore ipsumi dolo sitsits ametame consec (Adipisc, Elit) sedsed dodododod eiusmo?",
+           "bold": true
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor: ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Loremlo ip do sits ametame conse a elitel sedsedsedsed dodo.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      },
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor "
+          },
+          {
+           "kind": "text",
+           "text": "loremlorem ipsumi dolor",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": " (loreml ipsumipsum dolor), "
+          },
+          {
+           "kind": "text",
+           "text": "lorem i dolordolordol sitsitsi",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": " l ipsumip dolordolo sits ame consecte a elite sedsedse."
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor ipsum do si ametametam conse adipi elitelitelite sedse 2–3 %, dododod eiusmod temportempo incidid u laborelabor etetetete doloredolo m aliquaal loremlore ipsum dol.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      }
+     ],
+     "badge": "11"
+    },
+    {
+     "parts": [
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lore ipsumipsum dolo sitsitsi ametam consec Adip eli sedsedsedse dododo?",
+           "bold": true
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor: ",
+           "tone": "muted"
+          },
+          {
+           "kind": "text",
+           "text": "Lo ip dolor s ametame c adip elitelit se dododo eiusmo tempo?",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      },
+      {
+       "blocks": [
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Loremlor ipsumip",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": ", "
+          },
+          {
+           "kind": "text",
+           "text": "loremlo ipsumi",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": ", loremlorem "
+          },
+          {
+           "kind": "text",
+           "text": "loremlor ipsumips",
+           "bold": true
+          },
+          {
+           "kind": "text",
+           "text": " lo ipsumips dolordolo sits a consect adipisc elitelit sedse do eiusmodei temp inci."
+          }
+         ],
+         "align": "center"
+        },
+        {
+         "kind": "paragraph",
+         "content": [
+          {
+           "kind": "text",
+           "text": "Lorem Ipsu dolordol sitsitsits ametametam, consec adipi elitelit. Sedse dodo eiusmo temportemp Inci ututut laborela, et doloredo magna al loremlore ipsumipsu d sitsitsi.",
+           "tone": "muted"
+          }
+         ],
+         "style": "small",
+         "align": "center"
+        }
+       ]
+      }
+     ],
+     "badge": "12"
+    }
+   ]
+  }
+ ]
+}

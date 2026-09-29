@@ -22,6 +22,16 @@ jobs:
       - uses: Swatinem/rust-cache@c19371144df3bb44fab255c43d04cbc2ab54d1c4
       - run: cargo test --locked
       - run: cargo build --release --locked
+      # Package checks for the defects Word refuses or repairs (evidence in
+      # tools/word-verify/README.md). Samples are anonymised production IRs.
+      - name: Lint rendered DOCX samples
+        if: matrix.platform == 'linux-x86_64'
+        run: |
+          mkdir -p target/samples
+          for ir in tools/word-verify/samples/*.ir.json; do
+            target/release/lyset render "$ir" --docx "target/samples/$(basename "$ir" .ir.json).docx"
+          done
+          python3 tools/word-verify/docxlint.py target/samples/*.docx
       - uses: actions/upload-artifact@v4
         with:
           name: lyset-${{ matrix.platform }}

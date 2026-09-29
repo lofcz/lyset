@@ -48,3 +48,12 @@ GitHub Actions builds `lyset-linux-x86_64` and `lyset-windows-x86_64`
 artifacts on pushes. The rdocx revision is pinned in both Cargo files.
 
 Highlighted code tokens can set `color` to a six-digit hexadecimal foreground (with an optional `#`) and use `bold`, `italic`, `underline`, or `strike`. These runs retain their formatting through DOCX and PDF export. Producers should supply Shiki light-theme token colours for the light code panel. Plain code remains regular monospace.
+
+## Word compatibility
+
+`tools/word-verify/` holds the Word checks: a service that opens files in a
+real, hidden Microsoft Word (normal open, Protected View with Enable Editing,
+repair) and reports Word's own error text, a static linter that CI runs on
+rendered samples, a fixture generator that records which defects Word
+rejects, and a bisector that shrinks a failing DOCX to a minimal fragment.
+See `tools/word-verify/README.md`.
