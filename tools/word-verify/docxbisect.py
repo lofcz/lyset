@@ -34,6 +34,7 @@ from pathlib import Path
 from typing import Callable, Iterable
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import docxlint  # noqa: E402
 import wordcheck  # noqa: E402
 
 Pkg = dict[str, bytes]
@@ -343,7 +344,36 @@ def ab_minimal_styles(pkg: Pkg) -> None:
         put(pkg, "word/styles.xml", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style></w:styles>')
 
 
+def ab_normalize_package(pkg: Pkg) -> None:
+    """Dedupe content types and relationship ids, drop relationships to missing parts."""
+    ct = text(pkg, "[Content_Types].xml")
+    if ct:
+        seen: set[str] = set()
+        def once(m: re.Match[str]) -> str:
+            key = (m.group(1) + ":" + (attr(m.group(0), "PartName") or attr(m.group(0), "Extension") or "")).lower()
+            if key in seen:
+                return ""
+            seen.add(key)
+            return m.group(0)
+        put(pkg, "[Content_Types].xml", re.sub(r"<(Override|Default)\b[^>]*/>", once, ct))
+    names = {n.lower() for n in pkg}
+    for name in [n for n in pkg if n.endswith(".rels")]:
+        source = source_of(name)
+        ids: set[str] = set()
+        def keep(m: re.Match[str]) -> str:
+            tag = m.group(0)
+            rid = attr(tag, "Id") or ""
+            external = attr(tag, "TargetMode") == "External"
+            missing = not external and resolve(source, attr(tag, "Target") or "").lower() not in names
+            if rid in ids or missing:
+                return ""
+            ids.add(rid)
+            return tag
+        put(pkg, name, REL.sub(keep, text(pkg, name)))
+
+
 ABLATIONS: list[tuple[str, Callable[[Pkg], None]]] = [
+    ("normalize-package", ab_normalize_package),
     ("drop-embedded-fonts", ab_drop_embedded_fonts),
     ("strip-foreign-markup", ab_strip_foreign_markup),
     ("relativize-targets", ab_relativize_targets),
@@ -382,6 +412,11 @@ class Oracle:
     def __init__(self, fail_on: str, loose: bool, batch: int, timeout_ms: int) -> None:
         self.fail_on, self.loose, self.batch, self.timeout_ms = fail_on, loose, batch, timeout_ms
         self.target: tuple | None = None
+        # Lint error rules present in the input. A candidate that adds a new one
+        # has broken the package in some other way (e.g. a row left without
+        # cells, which Word also rejects with 5121) and must not count.
+        self.allowed_lint: set[str] | None = None
+        self.drift_rejected = 0
         self.calls = 0
         self.files = 0
 
@@ -403,8 +438,18 @@ class Oracle:
             out.extend(res["results"])
         return out
 
+    def drifts(self, pkg: bytes) -> bool:
+        if self.allowed_lint is None or self.loose:
+            return False
+        rules = {f.rule for f in docxlint.lint_bytes(pkg) if f.severity == "error"}
+        return not rules <= self.allowed_lint
+
     def test(self, pkgs: list[bytes]) -> list[bool]:
-        return [self.failing(r) for r in self.run(pkgs)]
+        verdicts: list[bool | None] = [False if self.drifts(p) else None for p in pkgs]
+        self.drift_rejected += sum(1 for v in verdicts if v is False)
+        todo = [p for p, v in zip(pkgs, verdicts) if v is None]
+        results = iter(self.failing(r) for r in self.run(todo)) if todo else iter(())
+        return [next(results) if v is None else v for v in verdicts]
 
 
 # ---------------------------------------------------------------------------
@@ -532,6 +577,11 @@ def main() -> int:
         err = (base.get(key) or {}).get("error")
         if err:
             log(f"  {key}: {err.get('description', '').splitlines()[0]} [{err.get('scode') or err.get('hresult')}]")
+    findings = [f for f in docxlint.lint_bytes(original) if f.severity == "error"]
+    oracle.allowed_lint = {f.rule for f in findings}
+    report["lint"] = [f"{f.rule} {f.part}: {f.message}" for f in findings]
+    for f in findings:
+        log(f"  lint: {f.rule} {f.part}: {f.message}")
     if not oracle.failing(rezipped):
         log("  a plain re-zip opens: the ZIP container is the trigger (entry flags, order, compression)")
         report["conclusion"] = "zip-container"
@@ -596,6 +646,7 @@ def main() -> int:
         "minimal": check,
         "fragmentBytes": len(fragment),
         "oracleCalls": oracle.calls,
+        "driftRejected": oracle.drift_rejected,
         "filesTested": oracle.files,
         "seconds": round(time.time() - started, 1),
         "log": lines,

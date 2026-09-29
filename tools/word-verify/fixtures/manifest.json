@@ -1,0 +1,506 @@
+{
+  "base": "fixture-base-emoji.docx",
+  "results": [
+    {
+      "fixture": "control",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "ct-duplicate-override",
+      "word": "repair",
+      "wordError": 5792,
+      "wordMessage": "The file appears to be corrupted.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "ct-duplicate-override"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "ct-duplicate-default",
+      "word": "repair",
+      "wordError": 5792,
+      "wordMessage": "The file appears to be corrupted.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "ct-duplicate-default"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "ct-untyped-font-part",
+      "word": "repair",
+      "wordError": 5792,
+      "wordMessage": "The file appears to be corrupted.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "ct-part-untyped"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "rel-duplicate-id",
+      "word": "repair",
+      "wordError": 5792,
+      "wordMessage": "The file appears to be corrupted.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "rel-duplicate-id"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "rel-missing-target",
+      "word": "repair",
+      "wordError": 5792,
+      "wordMessage": "The file appears to be corrupted.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "rel-missing-target"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "rel-dangling-rid",
+      "word": "repair",
+      "wordError": 5792,
+      "wordMessage": "The file appears to be corrupted.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "rel-dangling-rid"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "xml-control-char",
+      "word": "reject",
+      "wordError": 5121,
+      "wordMessage": "Word experienced an error trying to open the file.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "xml-illegal-char",
+        "xml-malformed"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "xml-control-char-reference",
+      "word": "reject",
+      "wordError": 5121,
+      "wordMessage": "Word experienced an error trying to open the file.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "xml-illegal-char",
+        "xml-malformed"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "xml-vertical-tab",
+      "word": "reject",
+      "wordError": 5121,
+      "wordMessage": "Word experienced an error trying to open the file.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "xml-illegal-char",
+        "xml-malformed"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "xml-malformed",
+      "word": "reject",
+      "wordError": 5121,
+      "wordMessage": "Word experienced an error trying to open the file.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "xml-malformed"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "wml-cell-without-paragraph",
+      "word": "repair",
+      "wordError": 5792,
+      "wordMessage": "The file appears to be corrupted.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "wml-cell-last-not-paragraph"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "wml-cell-ends-with-table",
+      "word": "repair",
+      "wordError": 5792,
+      "wordMessage": "The file appears to be corrupted.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "wml-cell-last-not-paragraph"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "wml-table-without-rows",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target",
+        "wml-table-no-rows"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "wml-row-without-cells",
+      "word": "reject",
+      "wordError": 5121,
+      "wordMessage": "Word experienced an error trying to open the file.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "wml-row-no-cells"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "wml-sectpr-not-last",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target",
+        "wml-sectpr-not-last"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "font-key-wrong",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "font-key-unbraced",
+      "word": "repair",
+      "wordError": 5792,
+      "wordMessage": "The file appears to be corrupted.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "font-key-format"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "mc-ignorable-undeclared",
+      "word": "reject",
+      "wordError": 5121,
+      "wordMessage": "Word experienced an error trying to open the file.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "xml-malformed"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "nan-grid-col",
+      "word": "repair",
+      "wordError": 5792,
+      "wordMessage": "The file appears to be corrupted.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "wml-bad-number"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "nan-font-size",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "decimal-twips-grid-col",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target",
+        "wml-fractional-number"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "decimal-twips-spacing",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target",
+        "wml-fractional-number"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "negative-font-size",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "unknown-w-element",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "rpr-wrong-child-order",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "empty-run-text",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "text-outside-run",
+      "word": "reject",
+      "wordError": 5121,
+      "wordMessage": "Word experienced an error trying to open the file.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "wml-run-content-outside-run"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "absolute-targets-everywhere",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "foreign-attribute-not-ignorable",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "foreign-element-not-ignorable",
+      "word": "reject",
+      "wordError": 5121,
+      "wordMessage": "Word experienced an error trying to open the file.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "foreign-element"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "zip-duplicate-entry",
+      "word": "repair",
+      "wordError": 5792,
+      "wordMessage": "The file appears to be corrupted.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "zip-duplicate-entry"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "zip-directory-entries",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target",
+        "zip-directory-entry"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "zip-stored-no-compression",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "zip-content-types-last",
+      "word": "ok",
+      "wordError": null,
+      "wordMessage": null,
+      "protectedView": true,
+      "dialogs": [],
+      "lintErrors": [],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    }
+  ]
+}
