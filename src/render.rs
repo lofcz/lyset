@@ -46,7 +46,11 @@ pub fn render(ir: &PrintDocument) -> Result<(Document, RenderReport), String> {
         "http://schemas.microsoft.com/office/word",
         "15",
     ).map_err(|e| format!("set Word compatibility mode: {e}"))?;
-    embed_emoji_font(&mut doc)?;
+    // The outline emoji font is ~870 KB. Embed it only when some text in the
+    // IR has a glyph in it; otherwise every export would carry it unused.
+    if ir_needs_emoji_font(ir) {
+        embed_emoji_font(&mut doc)?;
+    }
     let mut ctx = Ctx::new(ir)?;
 
     // Page geometry.
@@ -441,9 +445,34 @@ const EMOJI_FONT: &[u8] = include_bytes!("../fonts/NotoEmoji-Regular.ttf");
 /// Keep joined emoji, flags and variation selectors in one font/shaping run.
 /// The native renderer otherwise chooses one fallback for the entire run,
 /// including Latin letters the emoji font cannot draw.
-fn text_font_segments(text: &str) -> Vec<(&str, bool)> {
+fn emoji_face() -> &'static ttf_parser::Face<'static> {
     static FACE: std::sync::OnceLock<ttf_parser::Face<'static>> = std::sync::OnceLock::new();
-    let face = FACE.get_or_init(|| ttf_parser::Face::parse(EMOJI_FONT, 0).expect("bundled emoji font"));
+    FACE.get_or_init(|| ttf_parser::Face::parse(EMOJI_FONT, 0).expect("bundled emoji font"))
+}
+
+fn uses_emoji_font(ch: char) -> bool {
+    ch > '\u{7f}' && emoji_face().glyph_index(ch).is_some()
+}
+
+/// Whether any string in the IR has a character the emoji font would draw.
+/// Scans every string, not only runs that `text_font_segments` tags, because
+/// the embedded font is also the PDF coverage fallback for other runs.
+/// Image payloads are skipped: base64 is ASCII and can be megabytes.
+fn ir_needs_emoji_font(ir: &PrintDocument) -> bool {
+    fn walk(value: &serde_json::Value) -> bool {
+        match value {
+            serde_json::Value::String(s) => s.chars().any(uses_emoji_font),
+            serde_json::Value::Array(items) => items.iter().any(walk),
+            serde_json::Value::Object(map) => map.iter().any(|(key, v)| key != "data" && walk(v)),
+            _ => false,
+        }
+    }
+    // Serialization cannot fail for plain data. If it ever did, embedding is the safe side.
+    serde_json::to_value(ir).map_or(true, |value| walk(&value))
+}
+
+fn text_font_segments(text: &str) -> Vec<(&str, bool)> {
+    let face = emoji_face();
     let mut segments: Vec<(&str, bool)> = Vec::new();
     let mut start = 0;
     for (offset, grapheme) in text.grapheme_indices(true) {
@@ -2110,6 +2139,33 @@ mod tests {
             .collect();
         assert_eq!(settings.len(), 1);
         assert_eq!(settings[0].value, "15");
+    }
+
+    #[test]
+    fn emoji_font_is_embedded_only_when_some_text_needs_it() {
+        // ZIP entry names are stored uncompressed, so the part path is visible in the bytes.
+        fn has_embedded_font(ir: &PrintDocument) -> (bool, usize) {
+            let (mut doc, _) = render(ir).unwrap();
+            let bytes = doc.to_bytes().unwrap();
+            (bytes.windows(11).any(|w| w == b"word/fonts/"), bytes.len())
+        }
+        let (plain, plain_size) = has_embedded_font(&sample_test());
+        assert!(!plain, "a sheet without emoji must not carry the emoji font");
+        assert!(plain_size < 100_000, "plain sheet is {plain_size} bytes");
+
+        let emoji = parse(&serde_json::json!({
+            "version": 1, "locale": "cs", "kind": "worksheet", "title": "Emoji",
+            "blocks": [{ "kind": "paragraph", "content": [{ "kind": "text", "text": "Hotovo ✅" }] }]
+        }).to_string());
+        assert!(has_embedded_font(&emoji).0, "emoji text needs the embedded font");
+
+        // Titles and footers count too, not only body text.
+        let footer_only = parse(&serde_json::json!({
+            "version": 1, "locale": "cs", "kind": "worksheet", "title": "Rozvrh 📚",
+            "footer": { "left": "Rozvrh 📚" },
+            "blocks": [{ "kind": "paragraph", "content": [{ "kind": "text", "text": "Bez emoji" }] }]
+        }).to_string());
+        assert!(has_embedded_font(&footer_only).0);
     }
 
     #[test]
