@@ -12,8 +12,10 @@ rdocx's subset.
 editable boxed math and correct PDF text extraction after ligatures. System
 fonts are disabled for deterministic output. No sibling checkout is required.
 
-Noto Emoji is embedded in generated documents for deterministic monochrome
-emoji fallback, including flags and joined sequences. The outline font works
+Noto Emoji is embedded for deterministic monochrome emoji fallback,
+including flags and joined sequences, but only when some string in the IR
+has a character the font draws. Documents without emoji do not carry the
+~870 KB font (the typical export shrinks from ~600 KB to ~16 KB). The outline font works
 in both PDF and DOCX without installing fonts on the server. Its SIL Open Font
 License is included in `fonts/OFL-NotoEmoji.txt`. `fonts/NotoEmoji-Regular.ttf`
 is the weight-400 static instance of Google Fonts' `ofl/notoemoji/NotoEmoji[wght].ttf`,
@@ -46,3 +48,12 @@ GitHub Actions builds `lyset-linux-x86_64` and `lyset-windows-x86_64`
 artifacts on pushes. The rdocx revision is pinned in both Cargo files.
 
 Highlighted code tokens can set `color` to a six-digit hexadecimal foreground (with an optional `#`) and use `bold`, `italic`, `underline`, or `strike`. These runs retain their formatting through DOCX and PDF export. Producers should supply Shiki light-theme token colours for the light code panel. Plain code remains regular monospace.
+
+## Word compatibility
+
+`tools/word-verify/` holds the Word checks: a service that opens files in a
+real, hidden Microsoft Word (normal open, Protected View with Enable Editing,
+repair) and reports Word's own error text, a static linter that CI runs on
+rendered samples, a fixture generator that records which defects Word
+rejects, and a bisector that shrinks a failing DOCX to a minimal fragment.
+See `tools/word-verify/README.md`.

@@ -1,1 +1,4 @@
 /target
+/tools/word-verify/target
+__pycache__/
+/tools/word-verify/fixtures/*.docx

@@ -1,0 +1,5 @@
+{"version": 1, "locale": "cs", "kind": "print", "title": "Emoji 📚",
+ "footer": {"left": "Emoji 📚", "pageNumbers": true, "pageNumberFormat": "Strana {page} / {pages}"},
+ "blocks": [{"kind": "cards", "columns": 3, "heightMm": 52, "items": [
+   {"parts": [{"blocks": [{"kind": "paragraph", "content": [{"kind": "text", "text": "Lorem ipsum 📚 📖 ✍️ 📝"}, {"kind": "text", "text": "🇨🇿 🇸🇰 🗺️ 🧭 👩‍🏫 👍🏽 1️⃣", "bold": true}]}]}]},
+   {"parts": [{"blocks": [{"kind": "paragraph", "content": [{"kind": "text", "text": "Dolor sit ✅ ❌ ⭐"}]}]}]}]}]}

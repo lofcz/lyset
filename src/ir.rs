@@ -3,12 +3,12 @@
 //! Field names, enum values and defaults are the public contract. Unknown
 //! fields are rejected so producers and this renderer stay in lockstep.
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 /// `locale` / `kind` are part of the contract but the renderer is currently
 /// locale-agnostic (labels arrive pre-localised in the IR).
 #[allow(dead_code)]
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct PrintDocument {
     pub version: u32,
@@ -30,7 +30,7 @@ pub struct PrintDocument {
     pub blocks: Vec<Block>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Watermark {
     pub image: Image,
@@ -39,7 +39,7 @@ pub struct Watermark {
     pub width_mm: Option<f64>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum DocumentKind {
     Lesson,
@@ -49,7 +49,7 @@ pub enum DocumentKind {
     Print,
 }
 
-#[derive(Debug, Default, Deserialize)]
+#[derive(Debug, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Header {
     #[serde(default)]
@@ -58,7 +58,7 @@ pub struct Header {
     pub right: Option<String>,
 }
 
-#[derive(Debug, Default, Deserialize)]
+#[derive(Debug, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Footer {
     #[serde(default)]
@@ -69,7 +69,7 @@ pub struct Footer {
     pub page_number_format: Option<String>,
 }
 
-#[derive(Debug, Default, Deserialize)]
+#[derive(Debug, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Page {
     #[serde(default)]
@@ -78,14 +78,14 @@ pub struct Page {
     pub margins_mm: Option<[f64; 4]>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Orientation {
     Portrait,
     Landscape,
 }
 
-#[derive(Debug, Default, Deserialize)]
+#[derive(Debug, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Theme {
     #[serde(default)]
@@ -96,7 +96,7 @@ pub struct Theme {
 // Inline
 // ---------------------------------------------------------------------------
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize, Default)]
 #[serde(rename_all = "lowercase")]
 pub enum Tone {
     #[default]
@@ -106,7 +106,7 @@ pub enum Tone {
     Answer,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "camelCase", deny_unknown_fields)]
 pub enum Inline {
     Text {
@@ -157,7 +157,7 @@ pub enum Inline {
 // Blocks
 // ---------------------------------------------------------------------------
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Align {
     Left,
@@ -166,7 +166,7 @@ pub enum Align {
     Justify,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize, Default)]
 #[serde(rename_all = "lowercase")]
 pub enum ParagraphStyle {
     #[default]
@@ -178,7 +178,7 @@ pub enum ParagraphStyle {
     Code,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum PanelVariant {
     Note,
@@ -192,7 +192,7 @@ pub enum PanelVariant {
     Plain,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize, Default)]
 #[serde(rename_all = "lowercase")]
 pub enum TableStyle {
     Grid,
@@ -201,7 +201,7 @@ pub enum TableStyle {
     Plain,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize, Default)]
 #[serde(rename_all = "lowercase")]
 pub enum VAlign {
     #[default]
@@ -210,7 +210,7 @@ pub enum VAlign {
     Bottom,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize, Default)]
 #[serde(rename_all = "lowercase")]
 pub enum RuleTone {
     #[default]
@@ -224,7 +224,7 @@ pub enum RuleTone {
 ///
 /// `alt` is accepted for schema parity; DOCX pictures carry no alt text yet.
 #[allow(dead_code)]
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Image {
     #[serde(default)]
@@ -242,7 +242,7 @@ pub struct Image {
     pub max_height_mm: Option<f64>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct ListItem {
     pub content: Vec<Inline>,
@@ -252,7 +252,7 @@ pub struct ListItem {
     pub children: Option<Vec<Block>>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct TableCell {
     pub blocks: Vec<Block>,
@@ -266,14 +266,14 @@ pub struct TableCell {
     pub v_align: Option<VAlign>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct FactRow {
     pub label: String,
     pub blocks: Vec<Block>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct Field {
     pub label: String,
@@ -283,7 +283,7 @@ pub struct Field {
     pub value: Option<String>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct OptionItem {
     pub label: String,
@@ -294,13 +294,13 @@ pub struct OptionItem {
     pub image: Option<Image>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct CardPart {
     pub blocks: Vec<Block>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct CardItem {
     pub parts: Vec<CardPart>,
@@ -308,7 +308,7 @@ pub struct CardItem {
     pub badge: Option<String>,
 }
 
-#[derive(Debug, Clone, Default, Deserialize)]
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct GridCell {
     #[serde(default)]
@@ -319,14 +319,14 @@ pub struct GridCell {
     pub blocked: Option<bool>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum GridAlign {
     Left,
     Center,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "camelCase", deny_unknown_fields)]
 pub enum Block {
     Heading {

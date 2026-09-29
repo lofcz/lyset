@@ -1,0 +1,1080 @@
+{
+ "version": 1,
+ "locale": "sk",
+ "kind": "worksheet",
+ "title": "Lo ipsumipsu dolordol s ametameta consect",
+ "footer": {
+  "left": "Lo ipsumipsu dolordol s ametameta consect  ·  Adipisci",
+  "pageNumbers": true,
+  "pageNumberFormat": "Strana {page} / {pages}"
+ },
+ "watermark": {
+  "image": {
+   "mime": "image/png",
+   "alt": "Loremlo",
+   "data": "iVBORw0KGgoAAAANSUhEUgAAAEsAAAAPCAIAAAAj5aXHAAAAMUlEQVR4nO3RAQ0AAAzCMPwrQ9ZVPM+eVQFk6Xfpdz7ksyGfDflsyGdDPhvy5XrAugECsE1PSVY/zAAAAABJRU5ErkJggg=="
+  },
+  "widthMm": 22
+ },
+ "blocks": [
+  {
+   "kind": "heading",
+   "level": 1,
+   "content": [
+    {
+     "kind": "text",
+     "text": "Lo ipsumipsu dolordol s ametameta consect"
+    }
+   ],
+   "kicker": "Loremlor ipsu  ·  Do sitsitsi ametamet  ·  8. conse  ·  Adipisci"
+  },
+  {
+   "kind": "rule",
+   "tone": "accent"
+  },
+  {
+   "kind": "task",
+   "number": 1,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Lorem ipsum do sitsits ametametam consecte adipisc e se dododod eiusm tempo in ututu laborelabor etete?"
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "image",
+     "image": {
+      "mime": "image/png",
+      "alt": "Loremloremlo ipsumipsu dolordolor sitsits ametam con adipisci: Elite S dodododod eiusmo temporte incidid, Ututu L etetetete dolore magnam a loremlore ipsum.",
+      "maxWidth": 0.7,
+      "maxHeightMm": 70,
+      "data": "iVBORw0KGgoAAAANSUhEUgAAAEIAAAAaCAIAAACM6x0lAAAAOUlEQVR4nO3RAQkAAAjAMPsnM5Y1hnwNzmdfmH2hDEk3JN2QdEPSDUk3JN2QdEPSDUk3JN2QdGMhB1DKtsKDxD89AAAAAElFTkSuQmCC"
+     },
+     "align": "center"
+    },
+    {
+     "kind": "options",
+     "columns": 1,
+     "items": [
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Lorem I, dolordo sit ametamet co adipi eliteli se dodododod eiusmod temportempo incidid."
+        }
+       ],
+       "correct": true
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Lorem I, dolordo sitsi am consect adipiscingad eliteli s dodododod eiusm."
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Lorem I, dolordo sitsitsit ametamet consec a elite sedse dod eiusmo te incidi ututututu."
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Lorem I, dolordo si ametame c adipiscin elite sedsedsedseds do eiusmod t incidid."
+        }
+       ],
+       "correct": false
+      }
+     ],
+     "reveal": true
+    }
+   ]
+  },
+  {
+   "kind": "task",
+   "number": 2,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Loremlor, ipsum do sitsitsi ametame consectet ad Elitel S dodododo eiu tempor incididunti ututu la Ete dolore magna aliqu."
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlor ipsum do sit ametamet consect ad elitelite sedsed do eiusmode temport. Incididu ututut Lab etetet doloredo m aliquaa loremlo ipsumipsu dolord s ametame conse adipiscin elitelit; se dododod ei temporte incidi utututututu labore e doloredolor magnam.",
+       "tone": "answer"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "task",
+   "number": 3,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Loreml ipsumipsum dolordolor sitsitsi a con adipisc elitelite s dodod."
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "table",
+     "rows": [
+      [
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "Loremlorem ipsumip"
+           }
+          ],
+          "style": "label"
+         }
+        ],
+        "shade": true
+       },
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "Loremlore ipsumips"
+           }
+          ],
+          "style": "label"
+         }
+        ],
+        "shade": true
+       }
+      ],
+      [
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "1. ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "Lorem.Ips"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "L) ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "2L Ips dolord si ametametametamet consec a elitelite sedseds"
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      [
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "2. ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "Loremlor"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "L) ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "Loremlore ipsumip do sitsitsit ametamet consecte adipisc"
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      [
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "3. ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "Loremlor"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "L) ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "3L ipsumipsum dolordo si ametametame conse adipis"
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      [
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "4. ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "Loremlor Ipsu"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "L) ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "Loremlor ipsumi do sitsit ametametam c adipiscing elitelite"
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     ],
+     "columns": [
+      2,
+      3
+     ],
+     "headerRows": 1,
+     "style": "rules",
+     "dense": true
+    },
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlo ipsumip",
+       "tone": "muted"
+      },
+      {
+       "kind": "text",
+       "text": "   "
+      },
+      {
+       "kind": "text",
+       "text": "1 ",
+       "bold": true,
+       "tone": "accent"
+      },
+      {
+       "kind": "blank",
+       "width": 3,
+       "answer": "L",
+       "reveal": true
+      },
+      {
+       "kind": "text",
+       "text": "      "
+      },
+      {
+       "kind": "text",
+       "text": "2 ",
+       "bold": true,
+       "tone": "accent"
+      },
+      {
+       "kind": "blank",
+       "width": 3,
+       "answer": "L",
+       "reveal": true
+      },
+      {
+       "kind": "text",
+       "text": "      "
+      },
+      {
+       "kind": "text",
+       "text": "3 ",
+       "bold": true,
+       "tone": "accent"
+      },
+      {
+       "kind": "blank",
+       "width": 3,
+       "answer": "L",
+       "reveal": true
+      },
+      {
+       "kind": "text",
+       "text": "      "
+      },
+      {
+       "kind": "text",
+       "text": "4 ",
+       "bold": true,
+       "tone": "accent"
+      },
+      {
+       "kind": "blank",
+       "width": 3,
+       "answer": "L",
+       "reveal": true
+      }
+     ],
+     "style": "body"
+    }
+   ]
+  },
+  {
+   "kind": "task",
+   "number": 4,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Lore ipsumipsu dolordol sitsitsit ametameta consectetur ad elitelit s dododod eiusmodei tempor. Incid utututu la et dolo magnama aliquaaliqua?"
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "options",
+     "columns": 1,
+     "items": [
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlor, ipsumip dolordol sitsitsit ametamet consecteturconsect adipisc e sedsedsedse dododod eiusmode temportem (incididu)."
+        }
+       ],
+       "correct": true
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Lorem.Ips, dolordo sitsitsi ametam consecteturc adipisc eliteli sedsed d eiusmodei temport."
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlo, ipsumip dolor si ametametam cons adipiscingad elite s dodododododod eiusmodei."
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlor, ipsumip do s ame consecte adi eliteliteli sedsed dod 3E temp."
+        }
+       ],
+       "correct": false
+      }
+     ],
+     "reveal": true
+    }
+   ]
+  },
+  {
+   "kind": "task",
+   "number": 5,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Loremlor, ip do sitsitsi a consectetu adipisc elitelit."
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlore ipsumip do sitsi ametameta consectet adipi elitelite sed dododododo eiusmo temporte i utututu laborelabo."
+      }
+     ],
+     "trailing": [
+      {
+       "kind": "text",
+       "text": "Lor",
+       "bold": true,
+       "tone": "answer"
+      },
+      {
+       "kind": "text",
+       "text": "   "
+      },
+      {
+       "kind": "text",
+       "text": "Lor",
+       "tone": "muted"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "task",
+   "number": 6,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Loremlor, ip do sitsitsi a consectetu adipiscingad elitelit."
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "L 2I Dol sitsitsit ame co adipi eliteli sedsedsed dodod eiu tempor incididu utut l etetet d magnama."
+      }
+     ],
+     "trailing": [
+      {
+       "kind": "text",
+       "text": "Lor",
+       "tone": "muted"
+      },
+      {
+       "kind": "text",
+       "text": "   "
+      },
+      {
+       "kind": "text",
+       "text": "Lor",
+       "bold": true,
+       "tone": "answer"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "task",
+   "number": 7,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Loreml ipsumips dolordo s ame consectet adipisci e sedsedseds dodod."
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "table",
+     "rows": [
+      [
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "Loremlor ipsumi"
+           }
+          ],
+          "style": "label"
+         }
+        ],
+        "shade": true
+       },
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "Loreml ipsumipsumi dolordol"
+           }
+          ],
+          "style": "label"
+         }
+        ],
+        "shade": true
+       }
+      ],
+      [
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "1. ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "Lor"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "L) ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "Loreml ipsumi 2D sitsitsitsi ametamet c adipiscingad e Sed dododododo"
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      [
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "2. ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "Lor / Ips"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "L) ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "Loremloreml ipsum dolord sitsit am 3C adip"
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      [
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "3. ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "Lor / Ips"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "L) ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "Loreml ipsumipsu dolordo sitsit am consecte adipi elitelite sedsed"
+           }
+          ]
+         }
+        ]
+       }
+      ],
+      [
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "4. ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "Lor"
+           }
+          ]
+         }
+        ]
+       },
+       {
+        "blocks": [
+         {
+          "kind": "paragraph",
+          "content": [
+           {
+            "kind": "text",
+            "text": "L) ",
+            "bold": true,
+            "tone": "accent"
+           },
+           {
+            "kind": "text",
+            "text": "Loremlor ipsumi dol sitsitsits ametamet co adipisci elite se dod"
+           }
+          ]
+         }
+        ]
+       }
+      ]
+     ],
+     "columns": [
+      2,
+      3
+     ],
+     "headerRows": 1,
+     "style": "rules",
+     "dense": true
+    },
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlo ipsumip",
+       "tone": "muted"
+      },
+      {
+       "kind": "text",
+       "text": "   "
+      },
+      {
+       "kind": "text",
+       "text": "1 ",
+       "bold": true,
+       "tone": "accent"
+      },
+      {
+       "kind": "blank",
+       "width": 3,
+       "answer": "L",
+       "reveal": true
+      },
+      {
+       "kind": "text",
+       "text": "      "
+      },
+      {
+       "kind": "text",
+       "text": "2 ",
+       "bold": true,
+       "tone": "accent"
+      },
+      {
+       "kind": "blank",
+       "width": 3,
+       "answer": "L",
+       "reveal": true
+      },
+      {
+       "kind": "text",
+       "text": "      "
+      },
+      {
+       "kind": "text",
+       "text": "3 ",
+       "bold": true,
+       "tone": "accent"
+      },
+      {
+       "kind": "blank",
+       "width": 3,
+       "answer": "L",
+       "reveal": true
+      },
+      {
+       "kind": "text",
+       "text": "      "
+      },
+      {
+       "kind": "text",
+       "text": "4 ",
+       "bold": true,
+       "tone": "accent"
+      },
+      {
+       "kind": "blank",
+       "width": 3,
+       "answer": "L",
+       "reveal": true
+      }
+     ],
+     "style": "body"
+    }
+   ]
+  },
+  {
+   "kind": "task",
+   "number": 8,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Lorem ip dolor sitsitsit ametame conse a eliteliteli sedsedsed."
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlore ipsumi d Sit ametamet consecte adipis eliteli sedsedsed dodododod, eiu te incid ututututu lab etetet dolored, magna aliquaal "
+      },
+      {
+       "kind": "blank",
+       "width": 6,
+       "answer": "lore",
+       "reveal": true
+      },
+      {
+       "kind": "text",
+       "text": ". L ipsumi dolord sits ametame consect ad elitelit sedsedse "
+      },
+      {
+       "kind": "blank",
+       "width": 6,
+       "answer": "lore",
+       "reveal": true
+      },
+      {
+       "kind": "text",
+       "text": " l ipsumi d sitsitsi, ametam c adipiscin. Elitel sedsedse dodododo e temportemp incididunt ut laborelabo etetete do magnamag ali "
+      },
+      {
+       "kind": "blank",
+       "width": 10,
+       "answer": "loremlor",
+       "reveal": true
+      },
+      {
+       "kind": "text",
+       "text": "."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "task",
+   "number": 9,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Lor ipsumips dolord si a 3C adipiscingad elitelitel (seds. Dodododo) eiusmod te incididunt ututututututu labore e doloredo magnam?"
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "options",
+     "columns": 1,
+     "items": [
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlore (ipsumips) dolordolo sitsits am consectet adipis elitel sed D."
+        }
+       ],
+       "correct": true
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlor ipsumipsum dolord s ametameta consec ad eliteliteli seds."
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml ipsumipsu dolord s Ame co Adip e sedsedse dododod."
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlor ipsumi dol sitsitsitsitsi ametametam consec Adip."
+        }
+       ],
+       "correct": false
+      }
+     ],
+     "reveal": true
+    }
+   ]
+  },
+  {
+   "kind": "task",
+   "number": 10,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Lorem ipsum dolordolordolor sitsits ame consec adipiscing eliteli se dododod ei temportem incidi ut labore etetete."
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "paragraph",
+     "content": [
+      {
+       "kind": "text",
+       "text": "Loremlo ipsumip",
+       "tone": "muted"
+      }
+     ],
+     "style": "small"
+    },
+    {
+     "kind": "list",
+     "ordered": true,
+     "items": [
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Lorem ipsum dolordolor sitsi a consecte adipi el sedsed"
+        }
+       ],
+       "number": 1
+      },
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlorem 3I dolord sitsit a consectetur adipisci (elit. Sedsedse)"
+        }
+       ],
+       "number": 2
+      },
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml ipsumips dolordolordol sitsit am consect Adi"
+        }
+       ],
+       "number": 3
+      },
+      {
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loreml ipsum do 3S ametameta consect adipiscin elitelite sedsed"
+        }
+       ],
+       "number": 4
+      }
+     ],
+     "tight": true
+    }
+   ]
+  },
+  {
+   "kind": "task",
+   "number": 11,
+   "prompt": [
+    {
+     "kind": "text",
+     "text": "Lorem ipsumip dolordo sitsi ametameta consect a elit sedsedsed dodododododo e temporte incididun utututututu laborelab?"
+    }
+   ],
+   "blocks": [
+    {
+     "kind": "options",
+     "columns": 2,
+     "items": [
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlor – Ipsum Dolordolord"
+        }
+       ],
+       "correct": true
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Lorem.Ips – Dolordo"
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlor Ipsu – Dolor Sitsitsit"
+        }
+       ],
+       "correct": false
+      },
+      {
+       "label": "L",
+       "content": [
+        {
+         "kind": "text",
+         "text": "Loremlor – Ipsum Dolo"
+        }
+       ],
+       "correct": false
+      }
+     ],
+     "reveal": true
+    }
+   ]
+  }
+ ]
+}
