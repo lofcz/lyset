@@ -292,6 +292,18 @@ class Lint:
             if head not in (b"\x00\x01\x00\x00", b"OTTO", b"true", b"ttcf"):
                 self.add("font-obfuscation", "error", target, f"de-obfuscated header {head.hex()} is not a font (wrong fontKey?)")
 
+    def check_app_properties(self) -> None:
+        """Word parses AppVersion as a number with the user's regional format:
+        a semver value opens on en-US but is error 5121 on cs-CZ/sk-SK/pl-PL."""
+        part = "docProps/app.xml"
+        data = self.parts.get(part)
+        if data is None:
+            return
+        match = re.search(rb"<(?:\w+:)?AppVersion>([^<]*)</(?:\w+:)?AppVersion>", data)
+        if match and not re.fullmatch(rb"\d{1,2}\.\d{4}", match.group(1).strip()):
+            self.add("app-version-format", "error", part,
+                     f"AppVersion {match.group(1).decode(errors='replace')!r} is not XX.YYYY; Word on comma-decimal locales refuses the file (5121)")
+
     def run(self) -> list[Finding]:
         self.check_zip()
         self.check_xml()
@@ -303,6 +315,7 @@ class Lint:
             for story in stories:
                 self.check_story(story)
         self.check_fonts()
+        self.check_app_properties()
         return self.findings
 
 

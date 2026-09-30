@@ -15,6 +15,36 @@
       "agree": "yes"
     },
     {
+      "fixture": "app-version-semver",
+      "word": "repair",
+      "wordError": 5121,
+      "wordMessage": "Word experienced an error trying to open the file.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "app-version-format"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
+      "fixture": "app-version-integer",
+      "word": "repair",
+      "wordError": 5792,
+      "wordMessage": "The file appears to be corrupted.",
+      "protectedView": false,
+      "dialogs": [],
+      "lintErrors": [
+        "app-version-format"
+      ],
+      "lintWarnings": [
+        "rel-absolute-target"
+      ],
+      "agree": "yes"
+    },
+    {
       "fixture": "ct-duplicate-override",
       "word": "repair",
       "wordError": 5792,

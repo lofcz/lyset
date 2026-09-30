@@ -23,7 +23,7 @@ use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use serde::Serialize;
 use windows::core::{w, GUID};
 use windows::Win32::System::Com::{CoCreateInstance, CoInitializeEx, CoUninitialize, IDispatch, CLSCTX_LOCAL_SERVER, COINIT_APARTMENTTHREADED};
-use windows::Win32::System::Registry::{RegDeleteTreeW, HKEY_CURRENT_USER};
+use windows::Win32::System::Registry::{RegDeleteTreeW, RegSetKeyValueW, HKEY_CURRENT_USER, REG_DWORD};
 
 use crate::diff::{diff_docx, PackageDiff};
 use crate::dispatch::{
@@ -61,6 +61,10 @@ struct DocStats {
     omaths: Option<i32>,
     fields: Option<i32>,
     sections: Option<i32>,
+    /// First COM failure while reading statistics (a modal dialog blocking the
+    /// object model shows up here instead of as silently missing numbers).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    error: Option<ComFailure>,
 }
 
 #[derive(Serialize, Clone, Debug, Default)]
@@ -71,6 +75,10 @@ struct PassResult {
     error: Option<ComFailure>,
     name: Option<String>,
     stats: Option<DocStats>,
+    /// Closing the document failed even after retries: the next pass would
+    /// then see "already open" (6302) instead of the file's own behaviour.
+    #[serde(rename = "closeError", skip_serializing_if = "Option::is_none")]
+    close_error: Option<ComFailure>,
     #[serde(rename = "timedOut")]
     timed_out: bool,
     ms: u128,
@@ -220,6 +228,18 @@ impl WordSession {
 fn clear_resiliency() {
     unsafe {
         let _ = RegDeleteTreeW(HKEY_CURRENT_USER, w!("Software\\Microsoft\\Office\\16.0\\Word\\Resiliency"));
+        // Office asks once which default file types to use (OOXML vs ODF),
+        // e.g. after a language pack install. The prompt is modal and blocks
+        // every automation call ("Call was rejected by callee") until answered.
+        let shown: u32 = 1;
+        let _ = RegSetKeyValueW(
+            HKEY_CURRENT_USER,
+            w!("Software\\Microsoft\\Office\\16.0\\Common\\General"),
+            w!("ShownFileFmtPrompt"),
+            REG_DWORD.0,
+            Some(&shown as *const u32 as *const core::ffi::c_void),
+            4,
+        );
     }
 }
 
@@ -317,7 +337,9 @@ fn open_protected(app: &IDispatch, path: &str) -> Result<IDispatch, ComFailure> 
 
 fn collect_stats(doc: &IDispatch) -> DocStats {
     let statistic = |kind: i32| method(doc, "ComputeStatistics", vec![vt_i4(kind)]).ok().and_then(|v| as_i32(&v));
+    let probe = method(doc, "ComputeStatistics", vec![vt_i4(WD_STATISTIC_PAGES)]).err();
     DocStats {
+        error: probe,
         pages: statistic(WD_STATISTIC_PAGES),
         characters: statistic(WD_STATISTIC_CHARACTERS),
         paragraphs: get_i32(doc, &["Paragraphs", "Count"]),
@@ -382,7 +404,7 @@ fn run_pass(
                     match method(&window, "Edit", vec![vt_missing(), vt_missing()]).and_then(|d| as_dispatch(&d)) {
                         Ok(edited) => {
                             pass.edited = Some(true);
-                            let _ = method(&edited, "Close", vec![vt_i4(WD_DO_NOT_SAVE_CHANGES)]);
+                            pass.close_error = close_retrying(&edited);
                         }
                         Err(err) => {
                             pass.edited = Some(false);
@@ -392,7 +414,7 @@ fn run_pass(
                     }
                 }
                 None => {
-                    let _ = method(&doc, "Close", vec![vt_i4(WD_DO_NOT_SAVE_CHANGES)]);
+                    pass.close_error = close_retrying(&doc);
                 }
             }
         }
@@ -406,6 +428,31 @@ fn run_pass(
     let disconnected = timed_out || pass.error.as_ref().is_some_and(|e| e.is_disconnect());
     let dialogs = hits.lock().map(|h| h.clone()).unwrap_or_default();
     PassOutcome { pass, dialogs, disconnected }
+}
+
+/// Close without saving. Word rejects calls while it is busy (background
+/// proofing, layout), so retry briefly before reporting the failure.
+fn close_retrying(doc: &IDispatch) -> Option<ComFailure> {
+    let mut last = None;
+    for attempt in 0..6 {
+        match method(doc, "Close", vec![vt_i4(WD_DO_NOT_SAVE_CHANGES)]) {
+            Ok(_) => return None,
+            Err(err) => {
+                if err.is_disconnect() {
+                    return Some(err);
+                }
+                last = Some(err);
+                std::thread::sleep(Duration::from_millis(250 * (attempt + 1)));
+            }
+        }
+    }
+    if let Some(err) = last.as_mut() {
+        let windows = isolate::desktop_windows();
+        if !windows.is_empty() {
+            err.description = format!("{} | windows: {}", err.description, windows.join("; "));
+        }
+    }
+    last
 }
 
 /// Verify one local file. `outputs` is where the PDF and repaired copy go.

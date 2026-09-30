@@ -191,6 +191,14 @@ def m_foreign_element_unignorable(p: Pkg) -> None:
     sub_first(p, DOC, r"(<w:p>)", r"\1<x:note/>")
 
 
+def m_app_version_semver(p: Pkg) -> None:
+    sub_first(p, "docProps/app.xml", r"<AppVersion>[^<]*</AppVersion>", "<AppVersion>0.14.0</AppVersion>")
+
+
+def m_app_version_integer(p: Pkg) -> None:
+    sub_first(p, "docProps/app.xml", r"<AppVersion>[^<]*</AppVersion>", "<AppVersion>14</AppVersion>")
+
+
 def zip_bytes(entries: list[tuple[str, bytes]]) -> bytes:
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
@@ -205,6 +213,8 @@ def ordered(p: Pkg) -> list[tuple[str, bytes]]:
 
 MUTATIONS: list[tuple[str, Callable[[Pkg], None] | None]] = [
     ("control", lambda p: None),
+    ("app-version-semver", m_app_version_semver),
+    ("app-version-integer", m_app_version_integer),
     ("ct-duplicate-override", m_ct_duplicate_override),
     ("ct-duplicate-default", m_ct_duplicate_default),
     ("ct-untyped-font-part", m_ct_untyped_font),

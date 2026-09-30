@@ -2142,6 +2142,26 @@ mod tests {
     }
 
     #[test]
+    fn app_version_parses_as_a_number_in_every_locale() {
+        // Word reads docProps/app.xml AppVersion with the user's regional
+        // format. A semver value ("0.14.0") made Word on cs-CZ/sk-SK/pl-PL
+        // refuse every export with error 5121 while en-US opened it.
+        let (mut doc, _) = render(&sample_test()).unwrap();
+        let bytes = doc.to_bytes().unwrap();
+        let mut archive = zip::ZipArchive::new(std::io::Cursor::new(bytes)).unwrap();
+        let mut app = String::new();
+        std::io::Read::read_to_string(&mut archive.by_name("docProps/app.xml").unwrap(), &mut app).unwrap();
+        if let Some(start) = app.find("<AppVersion>") {
+            let value = &app[start + 12..app.find("</AppVersion>").unwrap()];
+            let (int, frac) = value.split_once('.').unwrap_or((value, ""));
+            assert!(
+                int.len() == 2 && frac.len() == 4 && int.bytes().chain(frac.bytes()).all(|b| b.is_ascii_digit()),
+                "AppVersion must be XX.YYYY, got {value:?}"
+            );
+        }
+    }
+
+    #[test]
     fn emoji_font_is_embedded_only_when_some_text_needs_it() {
         // ZIP entry names are stored uncompressed, so the part path is visible in the bytes.
         fn has_embedded_font(ir: &PrintDocument) -> (bool, usize) {

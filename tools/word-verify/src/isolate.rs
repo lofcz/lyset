@@ -114,3 +114,33 @@ impl Drop for Isolation {
         }
     }
 }
+
+/// Every visible top-level window on the private desktop as `[class] title`,
+/// for diagnosing a modal state the dialog watcher did not recognise.
+pub fn desktop_windows() -> Vec<String> {
+    use windows::core::BOOL;
+    use windows::Win32::Foundation::{HWND, LPARAM};
+    use windows::Win32::System::StationsAndDesktops::EnumDesktopWindows;
+    use windows::Win32::UI::WindowsAndMessaging::{GetClassNameW, GetWindowTextW, IsWindowVisible};
+
+    unsafe extern "system" fn collect(hwnd: HWND, lparam: LPARAM) -> BOOL {
+        let out = unsafe { &mut *(lparam.0 as *mut Vec<String>) };
+        if unsafe { IsWindowVisible(hwnd) }.as_bool() {
+            let mut class = [0u16; 128];
+            let mut title = [0u16; 256];
+            let cn = unsafe { GetClassNameW(hwnd, &mut class) } as usize;
+            let tn = unsafe { GetWindowTextW(hwnd, &mut title) } as usize;
+            out.push(format!("[{}] {}", String::from_utf16_lossy(&class[..cn]), String::from_utf16_lossy(&title[..tn])));
+        }
+        BOOL(1)
+    }
+
+    let mut out: Vec<String> = Vec::new();
+    unsafe {
+        if let Ok(desk) = OpenDesktopW(DESKTOP_NAME, DESKTOP_CONTROL_FLAGS(0), false, DESKTOP_ACCESS) {
+            let _ = EnumDesktopWindows(Some(desk), Some(collect), LPARAM(&mut out as *mut _ as isize));
+            let _ = CloseDesktop(desk);
+        }
+    }
+    out
+}

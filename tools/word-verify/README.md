@@ -30,10 +30,17 @@ Failures carry Word's exception text and number, for example:
 
 | Word error | Message | Typical cause |
 |---|---|---|
-| 5121 | Word experienced an error trying to open the file | Not well-formed XML, a control character, `w:t` outside `w:r`, a row without cells, a foreign element that is not `mc:Ignorable`. Also what Protected View shows when its sandbox cannot start |
+| 5121 | Word experienced an error trying to open the file | `docProps/app.xml` `AppVersion` that is not `XX.YYYY` (e.g. semver `0.14.0`) on a comma-decimal locale, not well-formed XML, a control character, `w:t` outside `w:r`, a row without cells, a foreign element that is not `mc:Ignorable`. Also what Protected View shows when its sandbox cannot start |
 | 5792 | The file appears to be corrupted | Package defects: duplicate content types or relationship ids, missing parts, dangling `r:id`, NaN in `w:gridCol` |
 
-`fixtures.py` output against Word 16.0.20430 is the source of this table.
+`fixtures.py` output against Word 16.0.20430.20092 with the Czech regional
+format is the source of this table.
+
+Some of Word's parsing follows the user's **regional format**. A semver
+`AppVersion` opens on en-US and is rejected (5121, normal open and Protected
+View) on cs-CZ, sk-SK, pl-PL and other comma-decimal locales, which is every
+customer. Keep the VM on the customers' locale (`Set-Culture cs-CZ`, then
+restart Word) and re-run `fixtures.py` after changing it.
 
 ## Setup (once per VM)
 
@@ -51,6 +58,12 @@ In the VM, run `\\host.lan\Data\_win_share\word-verify\install-autostart.bat`
 once. It copies the service to `%LOCALAPPDATA%\lyset-word-verify`, opens the
 firewall port and registers a logon task. Later builds are pushed with
 `wordcheck.py deploy`, which hot-swaps the running service.
+
+Each Word session start clears Word's resiliency keys and sets
+`HKCU\Software\Microsoft\Office\16.0\Common\General\ShownFileFmtPrompt`, so
+the one-time "Default File Types" prompt (it appears e.g. after a language pack
+install) cannot block automation. A document that still cannot be closed
+reports `closeError` with the windows on the private desktop.
 
 The host talks to the VM over HTTP, not through the shared folder: the
 Windows SMB client caches listings of a share whose files change behind
@@ -70,6 +83,8 @@ Exit codes: 0 all good, 1 some file failed, 2 the service or setup is broken.
 
 ## Caveats
 
+- Test on the customers' regional format. An en-US VM passed files that every
+  Czech and Slovak teacher's Word refused.
 - Word only reports what the machine it runs on does. A file that opens here
   can still fail on a machine whose Protected View sandbox is broken, or under
   a security product or policy the VM does not have.
