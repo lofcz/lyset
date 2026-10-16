@@ -1,0 +1,15 @@
+Noto Sans Symbols 2 fallback subset
+
+Source: NotoSansSymbols2-Regular.ttf, installed by Arch Linux noto-fonts.
+Source SHA-256: c4a0a80f0041ce4be81e2478faad22776d23edb98ae3f0d19bd37044820ecf9d
+Subset SHA-256: bbfe8dc0c1bca0cb34bd0ddbb10d8a8e78834f12dfcc7844f5e9093a3bd1c0f2
+License: SIL Open Font License 1.1, see OFL-NotoSansSymbols2.txt.
+
+Coverage: space, miscellaneous technical symbols, miscellaneous symbols,
+dingbats and miscellaneous symbols and arrows. In particular U+2713 CHECK MARK,
+used by KaTeX's checkmark command, is absent from the bundled math and emoji
+fonts. Keep these glyphs as native Office Math with a portable fallback face.
+
+Recipe (fontTools 4.67.0):
+
+pyftsubset NotoSansSymbols2-Regular.ttf --output-file=NotoSansSymbols2-subset.ttf --unicodes=U+0020,U+2300-23FF,U+2600-27BF,U+2B00-2BFF --glyph-names --symbol-cmap --legacy-cmap --notdef-glyph --notdef-outline --recommended-glyphs --name-IDs=* --name-legacy --name-languages=* --layout-features=* --no-hinting

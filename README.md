@@ -24,6 +24,12 @@ generated with fontTools `instantiateVariableFont(font, {"wght": 400})`.
 Unsupported or malformed formulas are preserved as literal text and reported
 in `warnings`. They do not abort the rest of the export.
 
+The bundled Noto Sans Symbols 2 subset supplies checkmarks and other school
+notation missing from the math font. It is embedded only when needed, including
+symbols encoded as MathML entities. Formulas with unavailable glyphs fall back
+individually with a warning, preserving the other editable equations and both
+export formats. The subset recipe and licence are in `fonts/`.
+
 ```
 lyset render <ir.json> --docx <out.docx> [--pdf <out.pdf>] [--png-dir <dir>] [--dpi <n>]
 ```

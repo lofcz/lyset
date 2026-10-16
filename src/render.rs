@@ -51,6 +51,10 @@ pub fn render(ir: &PrintDocument) -> Result<(Document, RenderReport), String> {
     if ir_needs_emoji_font(ir) {
         embed_emoji_font(&mut doc)?;
     }
+    if ir_needs_font(ir, uses_symbol_font) {
+        embed_fallback_font(&mut doc, "Noto Sans Symbols 2", SYMBOL_FONT,
+            "{E56D79CF-7D91-47E4-9802-B4E5C65EBE69}", "Noto Sans Symbols 2")?;
+    }
     let mut ctx = Ctx::new(ir)?;
 
     // Page geometry.
@@ -81,14 +85,19 @@ pub fn render(ir: &PrintDocument) -> Result<(Document, RenderReport), String> {
 /// so coverage fallback works for both PDF and a reopened DOCX. Color bitmap
 /// fonts cannot supply the outlines needed by the native PDF renderer.
 fn embed_emoji_font(doc: &mut Document) -> Result<(), String> {
-    doc.set_font(rdocx::FontDefinition::new("Noto Emoji"))
-        .map_err(|e| format!("register emoji font: {e}"))?;
-    doc.embed_font("Noto Emoji", rdocx::EmbeddedFont::new(
+    embed_fallback_font(doc, "Noto Emoji", EMOJI_FONT,
+        "{B0E6E576-8D74-4C44-97D7-EF7CD297A018}", "Noto Emoji")
+}
+
+fn embed_fallback_font(doc: &mut Document, family: &str, bytes: &[u8], key: &str, license_name: &str) -> Result<(), String> {
+    doc.set_font(rdocx::FontDefinition::new(family))
+        .map_err(|e| format!("register {family} font: {e}"))?;
+    doc.embed_font(family, rdocx::EmbeddedFont::new(
         rdocx::EmbeddedFontKind::Regular,
-        EMOJI_FONT.to_vec(),
-        "{B0E6E576-8D74-4C44-97D7-EF7CD297A018}",
-        rdocx::FontEmbeddingLicense::new(true, "SIL Open Font License 1.1 (Noto Emoji)"),
-    )).map_err(|e| format!("embed emoji font: {e}"))
+        bytes.to_vec(),
+        key,
+        rdocx::FontEmbeddingLicense::new(true, format!("SIL Open Font License 1.1 ({license_name})")),
+    )).map_err(|e| format!("embed {family} font: {e}"))
 }
 
 // ---------------------------------------------------------------------------
@@ -108,6 +117,8 @@ struct Ctx {
     links: HashMap<String, String>,
     warnings: Vec<String>,
     image_seq: usize,
+    /// Repeated equations need only one native layout preflight per document.
+    math_checks: HashMap<Vec<u8>, Result<(), String>>,
     /// Keep-with-next policy for paragraphs created by the block being
     /// rendered (small tasks stay on one page as a chain).
     keep: Keep,
@@ -144,6 +155,7 @@ impl Ctx {
             links: HashMap::new(),
             warnings: Vec::new(),
             image_seq: 0,
+            math_checks: HashMap::new(),
             keep: Keep::Off,
         })
     }
@@ -441,6 +453,16 @@ impl RunStyle {
 }
 
 const EMOJI_FONT: &[u8] = include_bytes!("../fonts/NotoEmoji-Regular.ttf");
+const SYMBOL_FONT: &[u8] = include_bytes!("../fonts/NotoSansSymbols2-subset.ttf");
+
+fn symbol_face() -> &'static ttf_parser::Face<'static> {
+    static FACE: std::sync::OnceLock<ttf_parser::Face<'static>> = std::sync::OnceLock::new();
+    FACE.get_or_init(|| ttf_parser::Face::parse(SYMBOL_FONT, 0).expect("bundled symbol font"))
+}
+
+fn uses_symbol_font(ch: char) -> bool {
+    ch > '\u{7f}' && !uses_emoji_font(ch) && symbol_face().glyph_index(ch).is_some()
+}
 
 /// Keep joined emoji, flags and variation selectors in one font/shaping run.
 /// The native renderer otherwise chooses one fallback for the entire run,
@@ -459,46 +481,71 @@ fn uses_emoji_font(ch: char) -> bool {
 /// the embedded font is also the PDF coverage fallback for other runs.
 /// Image payloads are skipped: base64 is ASCII and can be megabytes.
 fn ir_needs_emoji_font(ir: &PrintDocument) -> bool {
-    fn walk(value: &serde_json::Value) -> bool {
+    ir_needs_font(ir, uses_emoji_font)
+}
+
+fn ir_needs_font(ir: &PrintDocument, covers: fn(char) -> bool) -> bool {
+    fn walk(value: &serde_json::Value, covers: fn(char) -> bool) -> bool {
         match value {
-            serde_json::Value::String(s) => s.chars().any(uses_emoji_font),
-            serde_json::Value::Array(items) => items.iter().any(walk),
-            serde_json::Value::Object(map) => map.iter().any(|(key, v)| key != "data" && walk(v)),
+            serde_json::Value::String(s) => s.chars().any(covers),
+            serde_json::Value::Array(items) => items.iter().any(|v| walk(v, covers)),
+            serde_json::Value::Object(map) => {
+                // TeX commands and MathML numeric entities carry no literal
+                // glyph. Inspect the converted equation as well as raw text.
+                if map.get("kind").and_then(|v| v.as_str()) == Some("math") {
+                    let converted = match map.get("mathml").and_then(|v| v.as_str()) {
+                        Some(mathml) => equation_from_mathml(mathml),
+                        None => equation_from_latex(map.get("tex").and_then(|v| v.as_str()).unwrap_or("")),
+                    };
+                    if let Ok(converted) = converted {
+                        if let Ok(xml) = OfficeMath::inline(converted.value.expressions).to_xml() {
+                            if String::from_utf8_lossy(&xml).chars().any(covers) { return true; }
+                        }
+                    }
+                }
+                map.iter().any(|(key, v)| key != "data" && walk(v, covers))
+            }
             _ => false,
         }
     }
     // Serialization cannot fail for plain data. If it ever did, embedding is the safe side.
-    serde_json::to_value(ir).map_or(true, |value| walk(&value))
+    serde_json::to_value(ir).map_or(true, |value| walk(&value, covers))
 }
 
-fn text_font_segments(text: &str) -> Vec<(&str, bool)> {
+fn text_font_segments(text: &str) -> Vec<(&str, &str)> {
     let face = emoji_face();
-    let mut segments: Vec<(&str, bool)> = Vec::new();
+    let mut segments: Vec<(&str, &str)> = Vec::new();
     let mut start = 0;
     for (offset, grapheme) in text.grapheme_indices(true) {
-        let emoji = grapheme.chars().any(|ch| ch > '\u{7f}' && face.glyph_index(ch).is_some());
+        let font = if grapheme.chars().any(|ch| ch > '\u{7f}' && face.glyph_index(ch).is_some()) {
+            "Noto Emoji"
+        } else if grapheme.chars().any(uses_symbol_font) {
+            "Noto Sans Symbols 2"
+        } else {
+            t::FONT_BODY
+        };
         if let Some((segment, previous)) = segments.last_mut() {
-            if *previous == emoji {
+            if *previous == font {
                 *segment = &text[start..offset + grapheme.len()];
                 continue;
             }
         }
         start = offset;
-        segments.push((grapheme, emoji));
+        segments.push((grapheme, font));
     }
-    if segments.is_empty() { segments.push((text, false)); }
+    if segments.is_empty() { segments.push((text, t::FONT_BODY)); }
     segments
 }
 
 fn styled_runs(p: &mut Paragraph<'_>, text: &str, style: &RunStyle, mut decorate: impl FnMut(&mut rdocx::Run<'_>, bool)) {
-    for (segment, emoji) in text_font_segments(text) {
+    for (segment, font) in text_font_segments(text) {
         let mut run = p.add_run(segment);
-        run.set_font(if emoji { "Noto Emoji" } else { t::FONT_BODY });
+        run.set_font(font);
         run.set_size(style.size);
         run.set_color(&style.color);
         if style.bold { run.set_bold(true); }
         if style.italic { run.set_italic(true); }
-        decorate(&mut run, emoji);
+        decorate(&mut run, font != t::FONT_BODY);
     }
 }
 
@@ -570,9 +617,9 @@ fn write_inlines_inner(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline],
                 let label = if text.is_empty() { href } else { text };
                 match rel {
                     Some(rel_id) => {
-                        for (segment, emoji) in text_font_segments(label) {
+                        for (segment, font) in text_font_segments(label) {
                             let mut run = p.add_hyperlink(segment, &rel_id);
-                            run.set_font(if emoji { "Noto Emoji" } else { t::FONT_BODY });
+                            run.set_font(font);
                             run.set_size(base.size);
                             run.set_color(&ctx.accent);
                             run.set_underline(true);
@@ -598,9 +645,15 @@ fn write_math(ctx: &mut Ctx, p: &mut Paragraph<'_>, tex: &str, mathml: Option<&s
     let reason = match converted {
         Ok(result) if result.diagnostics.is_empty() => {
             let om = OfficeMath::inline(result.value.expressions);
-            match p.add_equation(om) {
-                Ok(_) => return,
-                Err(e) => format!("could not insert equation: {e}"),
+            // The layout preflight rejects missing math glyphs for both PDF
+            // and Word. Catch them per formula so one symbol cannot abort
+            // an otherwise printable document.
+            match preflight_math(ctx, &om) {
+                Err(reason) => reason,
+                Ok(_) => match p.add_equation(om) {
+                    Ok(_) => return,
+                    Err(e) => format!("could not insert equation: {e}"),
+                },
             }
         }
         Ok(result) => result.diagnostics.iter()
@@ -610,6 +663,32 @@ fn write_math(ctx: &mut Ctx, p: &mut Paragraph<'_>, tex: &str, mathml: Option<&s
     };
     ctx.warnings.push(format!("Formula `{tex}` exported as plain text: {reason}"));
     styled_run(p, tex, style);
+}
+
+fn preflight_math(ctx: &mut Ctx, equation: &OfficeMath) -> Result<(), String> {
+    let xml = equation.to_xml().map_err(|e| format!("inspect equation: {e}"))?;
+    if let Some(result) = ctx.math_checks.get(&xml) { return result.clone(); }
+    let result = (|| {
+        // Use the actual layout engine, including its font selection and
+        // geometric accents. A cmap-only check would reject drawable vectors
+        // and miss runs that need several different fallback faces.
+        let mut probe = Document::new();
+        let source = String::from_utf8_lossy(&xml);
+        if source.chars().any(uses_emoji_font) { embed_emoji_font(&mut probe)?; }
+        if source.chars().any(uses_symbol_font) {
+            embed_fallback_font(&mut probe, "Noto Sans Symbols 2", SYMBOL_FONT,
+                "{E56D79CF-7D91-47E4-9802-B4E5C65EBE69}", "Noto Sans Symbols 2")?;
+        }
+        probe.add_paragraph("").add_equation(equation.clone())
+            .map_err(|e| format!("preflight equation: {e}"))?;
+        let layout = probe.layout().map_err(|e| format!("preflight equation: {e}"))?;
+        let errors: Vec<_> = layout.layout.diagnostics.iter()
+            .filter(|d| d.message.contains("OfficeMath"))
+            .map(|d| d.message.as_str()).collect();
+        if errors.is_empty() { Ok(()) } else { Err(errors.join("; ")) }
+    })();
+    ctx.math_checks.insert(xml, result.clone());
+    result
 }
 
 /// Real `<w:tab/>` (a literal tab inside `<w:t>` renders as a missing glyph).
@@ -1872,8 +1951,8 @@ fn rpr(size_half_pt: u32, color: &str, bold: bool) -> String {
 }
 
 fn text_run(text: &str, rpr_xml: &str) -> String {
-    text_font_segments(text).into_iter().map(|(segment, emoji)| {
-        let properties = if emoji { rpr_xml.replace(t::FONT_BODY, "Noto Emoji") } else { rpr_xml.to_string() };
+    text_font_segments(text).into_iter().map(|(segment, font)| {
+        let properties = if font != t::FONT_BODY { rpr_xml.replace(t::FONT_BODY, font) } else { rpr_xml.to_string() };
         format!("<w:r>{properties}<w:t xml:space=\"preserve\">{}</w:t></w:r>", xml_escape(segment))
     }).collect()
 }
@@ -2386,6 +2465,85 @@ mod tests {
             1
         );
         assert!(reopened.to_pdf().expect("PDF").starts_with(b"%PDF"));
+    }
+
+    #[test]
+    fn checkmark_math_has_real_glyphs_and_stays_editable_after_docx_round_trip() {
+        for symbol in ["✓", "&#x2713;"] {
+            let ir = parse(&serde_json::json!({
+                "version": 1, "locale": "cs", "kind": "lesson", "title": "Self assessment",
+                "blocks": [{ "kind": "paragraph", "content": [
+                    { "kind": "text", "text": "Ovladam " },
+                    { "kind": "math", "tex": "\\checkmark", "mathml": format!("<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mi mathvariant=\"normal\">{symbol}</mi></math>") },
+                    { "kind": "text", "text": ", fraction " },
+                    { "kind": "math", "tex": "\\frac{1}{2}" }
+                ] }]
+            }).to_string());
+            let (mut doc, report) = render(&ir).unwrap();
+            assert!(report.warnings.is_empty(), "{:?}", report.warnings);
+            let reopened = Document::from_bytes(&doc.to_bytes().unwrap()).unwrap();
+            for document in [&doc, &reopened] {
+                assert_eq!(document.paragraphs().iter().map(|p| p.equations().count()).sum::<usize>(), 2);
+                let layout = document.layout().unwrap();
+                assert!(layout.layout.diagnostics.is_empty(), "{:?}", layout.layout.diagnostics);
+                let mut found = false;
+                for page in &layout.layout.pages {
+                    oxml_layout::walk(&page.elements, &mut |element, _| {
+                        if let oxml_layout::PositionedElement::Text(run) = element {
+                            assert!(!run.glyph_ids.contains(&0), "missing glyph in {:?}", run.text);
+                            if run.text.contains('✓') { found = true; }
+                        }
+                    });
+                }
+                assert!(found, "checkmark disappeared");
+                assert!(document.to_pdf().unwrap().starts_with(b"%PDF"));
+            }
+        }
+    }
+
+    #[test]
+    fn unavailable_math_glyph_preserves_the_formula_and_exports_the_other_equations() {
+        let ir = parse(&serde_json::json!({
+            "version": 1, "locale": "en", "kind": "test", "title": "Missing glyph",
+            "blocks": [{ "kind": "paragraph", "content": [
+                { "kind": "math", "tex": "\\text{unavailable}", "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mi>&#x10FFFF;</mi></math>" },
+                { "kind": "math", "tex": "\\frac{1}{2}" }
+            ] }]
+        }).to_string());
+        let (mut doc, report) = render(&ir).unwrap();
+        assert_eq!(report.warnings.len(), 1);
+        assert!(report.warnings[0].contains("unavailable glyph"), "{:?}", report.warnings);
+        let reopened = Document::from_bytes(&doc.to_bytes().unwrap()).unwrap();
+        for document in [&doc, &reopened] {
+            assert!(document.paragraphs().iter().any(|p| p.text().contains("\\text{unavailable}")));
+            assert_eq!(document.paragraphs().iter().map(|p| p.equations().count()).sum::<usize>(), 1);
+            assert!(document.layout().unwrap().layout.diagnostics.is_empty());
+            assert!(document.to_pdf().unwrap().starts_with(b"%PDF"));
+        }
+    }
+
+    #[test]
+    fn symbol_font_is_embedded_only_when_needed_in_text_or_equations() {
+        let sample = |content| parse(&serde_json::json!({
+            "version": 1, "locale": "cs", "kind": "lesson", "title": "Symbols", "blocks": [{ "kind": "paragraph", "content": content }]
+        }).to_string());
+        for content in [
+            serde_json::json!([{ "kind": "text", "text": "Plain text" }]),
+            serde_json::json!([{ "kind": "math", "tex": "\\frac{1}{2}" }]),
+        ] {
+            let (mut doc, _) = render(&sample(content)).unwrap();
+            assert!(!doc.to_bytes().unwrap().windows(11).any(|w| w == b"word/fonts/"));
+        }
+        let (mut doc, _) = render(&sample(serde_json::json!([{ "kind": "text", "text": "Plain ✓ text" }]))).unwrap();
+        assert!(doc.to_bytes().unwrap().windows(11).any(|w| w == b"word/fonts/"));
+        let layout = doc.layout().unwrap();
+        for page in &layout.layout.pages {
+            oxml_layout::walk(&page.elements, &mut |element, _| {
+                if let oxml_layout::PositionedElement::Text(run) = element {
+                    assert!(!run.glyph_ids.contains(&0), "missing glyph in {:?}", run.text);
+                }
+            });
+        }
     }
 
     #[test]
