@@ -95,6 +95,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
 
 [[package]]
+name = "cfg_aliases"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f079e83a288787bcd14a6aea84cee5c87a67c5a3e660c30f557a3d24761b3527"
+
+[[package]]
 name = "const-oid"
 version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -542,7 +548,7 @@ dependencies = [
  "serde_json",
  "ttf-parser",
  "unicode-segmentation",
- "zip",
+ "zip 8.6.0",
 ]
 
 [[package]]
@@ -616,6 +622,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "650eef8c711430f1a879fdd01d4745a7deea475becfb90269c06775983bbf086"
 
 [[package]]
+name = "nix"
+version = "0.31.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
+dependencies = [
+ "bitflags",
+ "cfg-if",
+ "cfg_aliases",
+ "libc",
+]
+
+[[package]]
 name = "num-traits"
 version = "0.2.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -632,8 +650,8 @@ checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 
 [[package]]
 name = "oxml-chart"
-version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=8d1b93e11fd7108d355fa20e5331255f326db173#8d1b93e11fd7108d355fa20e5331255f326db173"
+version = "0.14.3"
+source = "git+https://github.com/lofcz/rdocx?rev=b969840f25fc13d5b0e361fbffbf768c5ccbd336#b969840f25fc13d5b0e361fbffbf768c5ccbd336"
 dependencies = [
  "oxml-core",
  "oxml-drawing",
@@ -644,8 +662,8 @@ dependencies = [
 
 [[package]]
 name = "oxml-core"
-version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=8d1b93e11fd7108d355fa20e5331255f326db173#8d1b93e11fd7108d355fa20e5331255f326db173"
+version = "0.14.3"
+source = "git+https://github.com/lofcz/rdocx?rev=b969840f25fc13d5b0e361fbffbf768c5ccbd336#b969840f25fc13d5b0e361fbffbf768c5ccbd336"
 dependencies = [
  "quick-xml",
  "thiserror",
@@ -653,8 +671,8 @@ dependencies = [
 
 [[package]]
 name = "oxml-drawing"
-version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=8d1b93e11fd7108d355fa20e5331255f326db173#8d1b93e11fd7108d355fa20e5331255f326db173"
+version = "0.14.3"
+source = "git+https://github.com/lofcz/rdocx?rev=b969840f25fc13d5b0e361fbffbf768c5ccbd336#b969840f25fc13d5b0e361fbffbf768c5ccbd336"
 dependencies = [
  "oxml-core",
  "quick-xml",
@@ -662,8 +680,8 @@ dependencies = [
 
 [[package]]
 name = "oxml-layout"
-version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=8d1b93e11fd7108d355fa20e5331255f326db173#8d1b93e11fd7108d355fa20e5331255f326db173"
+version = "0.14.3"
+source = "git+https://github.com/lofcz/rdocx?rev=b969840f25fc13d5b0e361fbffbf768c5ccbd336#b969840f25fc13d5b0e361fbffbf768c5ccbd336"
 dependencies = [
  "fontdb",
  "harfrust",
@@ -677,23 +695,23 @@ dependencies = [
 
 [[package]]
 name = "oxml-media"
-version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=8d1b93e11fd7108d355fa20e5331255f326db173#8d1b93e11fd7108d355fa20e5331255f326db173"
+version = "0.14.3"
+source = "git+https://github.com/lofcz/rdocx?rev=b969840f25fc13d5b0e361fbffbf768c5ccbd336#b969840f25fc13d5b0e361fbffbf768c5ccbd336"
 
 [[package]]
 name = "oxml-opc"
-version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=8d1b93e11fd7108d355fa20e5331255f326db173#8d1b93e11fd7108d355fa20e5331255f326db173"
+version = "0.14.3"
+source = "git+https://github.com/lofcz/rdocx?rev=b969840f25fc13d5b0e361fbffbf768c5ccbd336#b969840f25fc13d5b0e361fbffbf768c5ccbd336"
 dependencies = [
  "quick-xml",
  "thiserror",
- "zip",
+ "zip 9.0.4",
 ]
 
 [[package]]
 name = "oxml-pdf"
-version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=8d1b93e11fd7108d355fa20e5331255f326db173#8d1b93e11fd7108d355fa20e5331255f326db173"
+version = "0.14.3"
+source = "git+https://github.com/lofcz/rdocx?rev=b969840f25fc13d5b0e361fbffbf768c5ccbd336#b969840f25fc13d5b0e361fbffbf768c5ccbd336"
 dependencies = [
  "jpeg-encoder",
  "miniz_oxide 0.9.1",
@@ -709,8 +727,8 @@ dependencies = [
 
 [[package]]
 name = "oxml-sml"
-version = "0.12.1"
-source = "git+https://github.com/lofcz/rdocx?rev=8d1b93e11fd7108d355fa20e5331255f326db173#8d1b93e11fd7108d355fa20e5331255f326db173"
+version = "0.14.3"
+source = "git+https://github.com/lofcz/rdocx?rev=b969840f25fc13d5b0e361fbffbf768c5ccbd336#b969840f25fc13d5b0e361fbffbf768c5ccbd336"
 dependencies = [
  "oxml-opc",
  "quick-xml",
@@ -854,6 +872,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "pulldown-cmark"
+version = "0.13.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
+dependencies = [
+ "bitflags",
+ "memchr",
+ "pulldown-cmark-escape",
+ "unicase",
+]
+
+[[package]]
+name = "pulldown-cmark-escape"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "007d8adb5ddab6f8e3f491ac63566a7d5002cc7ed73901f72057943fa71ae1ae"
+
+[[package]]
 name = "quick-error"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -879,8 +915,8 @@ dependencies = [
 
 [[package]]
 name = "rdocx"
-version = "0.14.0"
-source = "git+https://github.com/lofcz/rdocx?rev=8d1b93e11fd7108d355fa20e5331255f326db173#8d1b93e11fd7108d355fa20e5331255f326db173"
+version = "0.16.3"
+source = "git+https://github.com/lofcz/rdocx?rev=b969840f25fc13d5b0e361fbffbf768c5ccbd336#b969840f25fc13d5b0e361fbffbf768c5ccbd336"
 dependencies = [
  "base64 0.23.1",
  "encoding_rs",
@@ -892,6 +928,7 @@ dependencies = [
  "oxml-opc",
  "oxml-pdf",
  "oxml-sml",
+ "pulldown-cmark",
  "quick-xml",
  "rdocx-html",
  "rdocx-layout",
@@ -901,32 +938,34 @@ dependencies = [
  "serde_json",
  "sha2",
  "thiserror",
- "zip",
+ "ttf-parser",
+ "zip 9.0.4",
 ]
 
 [[package]]
 name = "rdocx-html"
-version = "0.14.0"
-source = "git+https://github.com/lofcz/rdocx?rev=8d1b93e11fd7108d355fa20e5331255f326db173#8d1b93e11fd7108d355fa20e5331255f326db173"
+version = "0.16.3"
+source = "git+https://github.com/lofcz/rdocx?rev=b969840f25fc13d5b0e361fbffbf768c5ccbd336#b969840f25fc13d5b0e361fbffbf768c5ccbd336"
 dependencies = [
  "rdocx-oxml",
 ]
 
 [[package]]
 name = "rdocx-layout"
-version = "0.14.0"
-source = "git+https://github.com/lofcz/rdocx?rev=8d1b93e11fd7108d355fa20e5331255f326db173#8d1b93e11fd7108d355fa20e5331255f326db173"
+version = "0.16.3"
+source = "git+https://github.com/lofcz/rdocx?rev=b969840f25fc13d5b0e361fbffbf768c5ccbd336#b969840f25fc13d5b0e361fbffbf768c5ccbd336"
 dependencies = [
  "oxml-chart",
  "oxml-drawing",
  "oxml-layout",
  "rdocx-oxml",
+ "ttf-parser",
 ]
 
 [[package]]
 name = "rdocx-oxml"
-version = "0.14.0"
-source = "git+https://github.com/lofcz/rdocx?rev=8d1b93e11fd7108d355fa20e5331255f326db173#8d1b93e11fd7108d355fa20e5331255f326db173"
+version = "0.16.3"
+source = "git+https://github.com/lofcz/rdocx?rev=b969840f25fc13d5b0e361fbffbf768c5ccbd336#b969840f25fc13d5b0e361fbffbf768c5ccbd336"
 dependencies = [
  "itoa",
  "oxml-core",
@@ -1358,6 +1397,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
 
 [[package]]
+name = "unicase"
+version = "2.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "357cc3acc6a036009fd6c973ed009037c732d60d0b4f6c673e9041497482a28f"
+
+[[package]]
 name = "unicode-bidi"
 version = "0.3.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1539,6 +1584,20 @@ dependencies = [
  "memchr",
  "typed-path",
  "zopfli",
+]
+
+[[package]]
+name = "zip"
+version = "9.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a954114b47a54df49f83d2722814e86b23d4bb1b54a1b90fb7d92b41619ddc22"
+dependencies = [
+ "crc32fast",
+ "flate2",
+ "indexmap",
+ "memchr",
+ "nix",
+ "typed-path",
 ]
 
 [[package]]

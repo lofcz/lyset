@@ -8,8 +8,9 @@ repository = "https://github.com/lofcz/lyset"
 [dependencies]
 # `system-fonts` is off so PDF/PNG output is deterministic (bundled Carlito /
 # Caladea / Liberation).
-rdocx = { git = "https://github.com/lofcz/rdocx", rev = "8d1b93e11fd7108d355fa20e5331255f326db173", default-features = false }
-oxml-media = { git = "https://github.com/lofcz/rdocx", rev = "8d1b93e11fd7108d355fa20e5331255f326db173" }
+# Upstream S95.3 (rdocx 0.16.3), retaining the fork's export and math fixes.
+rdocx = { git = "https://github.com/lofcz/rdocx", rev = "b969840f25fc13d5b0e361fbffbf768c5ccbd336", default-features = false }
+oxml-media = { git = "https://github.com/lofcz/rdocx", rev = "b969840f25fc13d5b0e361fbffbf768c5ccbd336" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 base64 = "0.22"
@@ -18,7 +19,7 @@ unicode-segmentation = "1.12"
 
 [dev-dependencies]
 # Page-frame inspection in render tests.
-oxml-layout = { git = "https://github.com/lofcz/rdocx", rev = "8d1b93e11fd7108d355fa20e5331255f326db173", default-features = false }
+oxml-layout = { git = "https://github.com/lofcz/rdocx", rev = "b969840f25fc13d5b0e361fbffbf768c5ccbd336", default-features = false }
 # Reading package parts back in DOCX regression tests.
 zip = { version = "8", default-features = false, features = ["deflate"] }
 
