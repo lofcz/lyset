@@ -319,6 +319,7 @@ fn collect_list_assets(doc: &mut Document, ctx: &mut Ctx, items: &[ListItem]) {
 
 fn collect_inline_assets(doc: &mut Document, ctx: &mut Ctx, inlines: &[Inline]) {
     for inline in inlines {
+        if let Inline::Html { fallback, .. } = inline { collect_inline_assets(doc, ctx, fallback); }
         if let Inline::Link { href, .. } = inline {
             if !ctx.links.contains_key(href) {
                 let rel = doc.add_hyperlink_relationship(href);
@@ -614,6 +615,7 @@ fn write_inlines_inner(ctx: &mut Ctx, p: &mut Paragraph<'_>, inlines: &[Inline],
                     }
                 });
             }
+            Inline::Html { fallback, .. } => write_inlines(ctx, p, fallback, base),
             Inline::Math { tex, mathml } => write_math(ctx, p, tex, mathml.as_deref(), base),
             Inline::Break => p.add_line_break(),
             Inline::Blank { width, answer, reveal } => {
@@ -877,6 +879,7 @@ fn render_code<S: Sink>(sink: &mut S, frame: &Frame, content: &[Inline], keep: b
     // Retain token boundaries: flattening these runs discards Shiki colours.
     let mut tokens: Vec<(String, &Inline)> = content.iter().map(|inline| {
         let text = match inline {
+            Inline::Html { fallback, .. } => inline_plain_text(fallback),
             Inline::Text { text, .. } | Inline::Link { text, .. } => text.clone(),
             Inline::Break => "\n".to_string(),
             Inline::Math { tex, .. } => tex.clone(),
@@ -1294,6 +1297,16 @@ fn auto_column_weights(rows: &[Vec<TableCell>], cols: usize) -> Option<Vec<f64>>
     Some(weights)
 }
 
+fn inline_plain_text(inlines: &[Inline]) -> String {
+    inlines.iter().map(|i| match i {
+        Inline::Html { fallback, .. } => inline_plain_text(fallback),
+        Inline::Text { text, .. } | Inline::Link { text, .. } => text.clone(),
+        Inline::Math { tex, .. } => tex.clone(),
+        Inline::Break => "\n".to_string(),
+        Inline::Blank { width, answer, reveal } => if reveal.unwrap_or(false) { answer.clone().unwrap_or_default() } else { "_".repeat((*width).min(120) as usize) },
+    }).collect::<Vec<_>>().join("")
+}
+
 fn cell_plain_text(blocks: &[Block]) -> String {
     let mut out = String::new();
     for block in blocks {
@@ -1301,6 +1314,7 @@ fn cell_plain_text(blocks: &[Block]) -> String {
             Block::Paragraph { content, .. } | Block::Heading { content, .. } => {
                 for inline in content {
                     match inline {
+                        Inline::Html { fallback, .. } => out.push_str(&inline_plain_text(fallback)),
                         Inline::Text { text, .. } | Inline::Link { text, .. } => out.push_str(text),
                         Inline::Math { tex, .. } => out.push_str(tex),
                         Inline::Blank { .. } => out.push_str("________"),
@@ -1556,6 +1570,7 @@ fn estimate_chars(blocks: &[Block]) -> usize {
         inlines
             .iter()
             .map(|i| match i {
+                Inline::Html { fallback, .. } => inl(fallback),
                 Inline::Text { text, .. } => text.chars().count(),
                 Inline::Math { tex, .. } => tex.chars().count(),
                 Inline::Link { text, .. } => text.chars().count(),
@@ -2343,6 +2358,34 @@ mod tests {
             "blocks": [{ "kind": "html", "html": source, "fallback": [] }]
         }).to_string());
         assert!(render(&missing).err().unwrap().contains("prepared Word fallback"));
+    }
+
+    #[test]
+    fn html_inlines_keep_native_word_text_marks_and_math() {
+        let ir = parse(&serde_json::json!({
+            "version": 1, "locale": "cs", "kind": "activity", "title": "Inline HTML",
+            "blocks": [{ "kind": "html", "html": "<p>Styled paragraph</p>", "fragment": true,
+                "fallback": [{ "kind": "paragraph", "content": [
+                    { "kind": "text", "text": "Before " },
+                    { "kind": "html", "html": "<span style='background:gold'>Authored source</span>", "audience": "teacher", "marks": { "bold": true },
+                        "fallback": [{ "kind": "text", "text": "Editable fallback", "bold": true },
+                            { "kind": "math", "tex": "x^2" }] },
+                    { "kind": "text", "text": " after" }
+                ] }]
+            }]
+        }).to_string());
+        let round_trip = serde_json::to_value(&ir).unwrap();
+        assert_eq!(round_trip["blocks"][0]["fragment"], true);
+        assert_eq!(round_trip["blocks"][0]["fallback"][0]["content"][1]["audience"], "teacher");
+        assert_eq!(round_trip["blocks"][0]["fallback"][0]["content"][1]["marks"]["bold"], true);
+        let (mut doc, _) = render(&ir).unwrap();
+        let mut zip = zip::ZipArchive::new(std::io::Cursor::new(doc.to_bytes().unwrap())).unwrap();
+        let mut xml = String::new();
+        std::io::Read::read_to_string(&mut zip.by_name("word/document.xml").unwrap(), &mut xml).unwrap();
+        for expected in ["Before", "Editable fallback", "after", "<w:b", "<m:oMath"] {
+            assert!(xml.contains(expected), "missing {expected}");
+        }
+        assert!(!xml.contains("Authored source"));
     }
 
     fn parse(json: &str) -> PrintDocument {

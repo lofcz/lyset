@@ -118,6 +118,15 @@ pub enum Tone {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "camelCase", deny_unknown_fields)]
 pub enum Inline {
+    /// Browser markup plus the editable native fallback, shared by all material kinds.
+    Html {
+        html: String,
+        #[serde(default)]
+        audience: Option<String>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        marks: Option<HtmlInlineMarks>,
+        fallback: Vec<Inline>,
+    },
     Text {
         text: String,
         #[serde(default)]
@@ -160,6 +169,21 @@ pub enum Inline {
         href: String,
         text: String,
     },
+}
+
+/// Browser context marks; native fallback runs already carry these styles.
+#[derive(Debug, Default, Clone, Deserialize, Serialize)]
+#[serde(default, deny_unknown_fields)]
+pub struct HtmlInlineMarks {
+    pub bold: Option<bool>,
+    pub italic: Option<bool>,
+    pub underline: Option<bool>,
+    pub strike: Option<bool>,
+    pub code: Option<bool>,
+    pub sup: Option<bool>,
+    pub sub: Option<bool>,
+    pub tone: Option<Tone>,
+    pub color: Option<String>,
 }
 
 // ---------------------------------------------------------------------------
@@ -346,6 +370,8 @@ pub enum Block {
         css: Option<String>,
         #[serde(default)]
         audience: Option<String>,
+        #[serde(default)]
+        fragment: Option<bool>,
         fallback: Vec<Block>,
     },
     Heading {
