@@ -8,6 +8,20 @@ The IR is defined in `src/ir.rs`. Unknown fields are rejected. Formulas
 may carry presentation MathML; otherwise the authored LaTeX is parsed by
 rdocx's subset.
 
+Arbitrary HTML/CSS is retained as an `html` block with `html`, optional `css`
+and `audience`, and prepared native `fallback` blocks. CSS is never reduced to
+the native prose vocabulary. An empty fallback fails native rendering instead
+of dropping the authored block. Word renders the fallback, keeping surrounding
+exercises editable.
+
+Documents needing browser layout also carry
+`presentation: { "kind": "html", "html": "<!DOCTYPE html>..." }`. The host
+renders this self-contained, isolated HTML presentation with Chromium for
+selectable PDF text, CSS layout and color emoji. The native CLI accepts this
+source for DOCX, but rejects PDF/PNG requests for it so browser content cannot
+silently fall back to a different native layout. The TypeScript schema and host
+must be deployed alongside this sidecar capability.
+
 `rdocx` comes from the exact Git revision pinned in `Cargo.toml`, including
 editable boxed math and correct PDF text extraction after ligatures. System
 fonts are disabled for deterministic output. No sibling checkout is required.

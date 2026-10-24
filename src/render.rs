@@ -35,6 +35,23 @@ pub fn render(ir: &PrintDocument) -> Result<(Document, RenderReport), String> {
     if ir.version != 1 {
         return Err(format!("unsupported IR version {}", ir.version));
     }
+    fn check_html(value: &serde_json::Value) -> Result<(), String> {
+        match value {
+            serde_json::Value::Array(items) => {
+                for item in items { check_html(item)?; }
+            }
+            serde_json::Value::Object(object) => {
+                if object.get("kind").and_then(|kind| kind.as_str()) == Some("html") &&
+                    object.get("fallback").and_then(|blocks| blocks.as_array()).is_some_and(|blocks| blocks.is_empty()) {
+                    return Err("HTML/CSS block has no prepared Word fallback; browser preparation is required".into());
+                }
+                for child in object.values() { check_html(child)?; }
+            }
+            _ => {}
+        }
+        Ok(())
+    }
+    check_html(&serde_json::to_value(&ir.blocks).map_err(|error| error.to_string())?)?;
     let mut doc = Document::new();
     // Lyset applies presentation directly to runs and paragraphs. Use the
     // strict Word-compatible styles profile instead of emitting the richer
@@ -247,6 +264,7 @@ fn image_bytes(image: &Image) -> Result<Vec<u8>, String> {
 fn collect_assets(doc: &mut Document, ctx: &mut Ctx, blocks: &[Block]) {
     for block in blocks {
         match block {
+            Block::Html { fallback, .. } => collect_assets(doc, ctx, fallback),
             Block::Image { image, .. } => embed_image(doc, ctx, image),
             Block::Gallery { images } => images.iter().for_each(|i| embed_image(doc, ctx, i)),
             Block::Options { items, .. } => {
@@ -503,7 +521,7 @@ fn ir_needs_font(ir: &PrintDocument, covers: fn(char) -> bool) -> bool {
                         }
                     }
                 }
-                map.iter().any(|(key, v)| key != "data" && walk(v, covers))
+                map.iter().any(|(key, v)| !matches!(key.as_str(), "data" | "html" | "css" | "presentation") && walk(v, covers))
             }
             _ => false,
         }
@@ -779,6 +797,7 @@ fn render_block<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, block: &Blo
             render_table(sink, ctx, frame, rows, columns.as_deref(), header_rows.unwrap_or(0) as usize, style.unwrap_or_default(), dense.unwrap_or(false));
         }
         Block::Panel { variant, label, blocks } => render_panel(sink, ctx, frame, *variant, label.as_deref(), blocks),
+        Block::Html { fallback, .. } => render_blocks(sink, ctx, frame, fallback),
         Block::Image { image, align } => render_image(sink, ctx, frame, image, *align, None),
         Block::Gallery { images } => render_gallery(sink, ctx, frame, images),
         Block::Facts { rows } => render_facts(sink, ctx, frame, rows),
@@ -1556,6 +1575,7 @@ fn estimate_chars(blocks: &[Block]) -> usize {
             Block::List { items: list, .. } => items(list),
             Block::Table { rows, .. } => rows.iter().map(|r| 40 + r.iter().map(|c| estimate_chars(&c.blocks)).sum::<usize>()).sum(),
             Block::Panel { blocks, .. } => 40 + estimate_chars(blocks),
+            Block::Html { fallback, .. } => estimate_chars(fallback),
             Block::Image { .. } | Block::Gallery { .. } => 600,
             Block::Facts { rows } => rows.len() * 60,
             Block::AnswerLines { lines } => *lines as usize * 90,
@@ -2295,6 +2315,34 @@ mod tests {
             }
             assert!(runs > 0);
         }
+    }
+
+    #[test]
+    fn html_css_source_round_trips_and_word_uses_only_its_fallback() {
+        let source = "<section class='board'>Authored source</section>";
+        let css = ":root{--c:red}.board{display:grid}.board::before{content:'label'}";
+        let ir = parse(&serde_json::json!({
+            "version": 1, "locale": "cs", "kind": "worksheet", "title": "Custom",
+            "presentation": { "kind": "html", "html": "<!DOCTYPE html><p>Selectable PDF</p>" },
+            "blocks": [{ "kind": "html", "html": source, "css": css, "audience": "student",
+                "fallback": [{ "kind": "paragraph", "content": [{ "kind": "text", "text": "Prepared Word fallback" }] }]
+            }]
+        }).to_string());
+        let round_trip = serde_json::to_value(&ir).unwrap();
+        assert_eq!(round_trip["blocks"][0]["html"], source);
+        assert_eq!(round_trip["blocks"][0]["css"], css);
+        let (mut document, _) = render(&ir).unwrap();
+        let bytes = document.to_bytes().unwrap();
+        let mut zip = zip::ZipArchive::new(std::io::Cursor::new(bytes)).unwrap();
+        let mut xml = String::new();
+        std::io::Read::read_to_string(&mut zip.by_name("word/document.xml").unwrap(), &mut xml).unwrap();
+        assert!(xml.contains("Prepared Word fallback"));
+        assert!(!xml.contains("Authored source"));
+        let missing = parse(&serde_json::json!({
+            "version": 1, "locale": "cs", "kind": "worksheet", "title": "Custom",
+            "blocks": [{ "kind": "html", "html": source, "fallback": [] }]
+        }).to_string());
+        assert!(render(&missing).err().unwrap().contains("prepared Word fallback"));
     }
 
     fn parse(json: &str) -> PrintDocument {

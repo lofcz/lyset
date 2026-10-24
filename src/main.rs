@@ -90,6 +90,9 @@ fn run_render(args: &[String]) -> Result<ExitCode, String> {
     };
     let json = std::fs::read_to_string(&args.input).map_err(|e| format!("read {}: {e}", args.input.display()))?;
     let ir: ir::PrintDocument = serde_json::from_str(&json).map_err(|e| format!("invalid IR: {e}"))?;
+    if ir.presentation.is_some() && (args.pdf.is_some() || args.png_dir.is_some()) {
+        return Err("HTML presentation requires the host browser PDF renderer; use --docx for the native fallback".into());
+    }
 
     let (mut doc, report) = render::render(&ir)?;
     let mut warnings = report.warnings;

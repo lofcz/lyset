@@ -15,6 +15,9 @@ pub struct PrintDocument {
     pub locale: String,
     pub kind: DocumentKind,
     pub title: String,
+    /// Browser presentation retains arbitrary authored HTML/CSS for selectable PDFs.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub presentation: Option<HtmlPresentation>,
     #[serde(default)]
     pub header: Option<Header>,
     #[serde(default)]
@@ -28,6 +31,12 @@ pub struct PrintDocument {
     #[serde(default)]
     pub watermark: Option<Watermark>,
     pub blocks: Vec<Block>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(tag = "kind", rename_all = "camelCase", deny_unknown_fields)]
+pub enum HtmlPresentation {
+    Html { html: String },
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -329,6 +338,16 @@ pub enum GridAlign {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(tag = "kind", rename_all = "camelCase", deny_unknown_fields)]
 pub enum Block {
+    /// Source is retained verbatim. The host browser renders PDFs; native Word
+    /// uses the prepared fallback without attempting to interpret browser CSS.
+    Html {
+        html: String,
+        #[serde(default)]
+        css: Option<String>,
+        #[serde(default)]
+        audience: Option<String>,
+        fallback: Vec<Block>,
+    },
     Heading {
         level: u8,
         content: Vec<Inline>,
