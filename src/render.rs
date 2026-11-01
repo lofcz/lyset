@@ -2809,4 +2809,116 @@ mod tests {
         assert!(reopened.to_pdf().unwrap().starts_with(b"%PDF"));
     }
 
+    /// Glyphs of the only formula in a laid-out document, left to right:
+    /// (character, page-space left edge, right edge, font size).
+    fn formula_glyphs(document: &Document) -> Vec<(char, f64, f64, f64)> {
+        let layout = document.layout().expect("layout");
+        let mut glyphs = Vec::new();
+        for page in &layout.layout.pages {
+            oxml_layout::walk(&page.elements, &mut |element, transform| {
+                // Text runs map to source text; formula glyphs do not.
+                let oxml_layout::PositionedElement::Text(run) = element else { return };
+                if run.source.is_some() || run.field_kind.is_some() {
+                    return;
+                }
+                let mut x = run.origin.x;
+                for (ch, advance) in run.text.chars().zip(&run.advances) {
+                    let left = transform.a * x + transform.e;
+                    glyphs.push((ch, left, left + transform.a * advance, run.font_size));
+                    x += advance;
+                }
+            });
+        }
+        glyphs.sort_by(|a, b| a.1.total_cmp(&b.1));
+        glyphs
+    }
+
+    /// Inter-atom spacing in the PDF layout matches KaTeX (TeX's atom
+    /// classes, TeXbook Appendix G rules 5 and 6). Each case is the
+    /// production KaTeX MathML and KaTeX's own HTML spacing: `[n]` is the
+    /// space in mu (1/18 em) before a glyph, `?` skips script attachment.
+    #[test]
+    fn formula_spacing_follows_tex_atom_classes_like_katex() {
+        let cases: &[(&str, &str, &str)] = &[
+            (r"(-3; 2]", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">(</mo><mo>−</mo><mn>3</mn><mo separator="true">;</mo><mn>2</mn><mo stretchy="false">]</mo></mrow></math>"#, "( − 3 ; [3]2 ]"),
+            (r"/ :(-3)", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="normal">/</mi><mo>:</mo><mo stretchy="false">(</mo><mo>−</mo><mn>3</mn><mo stretchy="false">)</mo></mrow></math>"#, "/ [5]: [5]( − 3 )"),
+            (r"(-\infty; -4\rangle", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">(</mo><mo>−</mo><mi mathvariant="normal">∞</mi><mo separator="true">;</mo><mo>−</mo><mn>4</mn><mo stretchy="false">⟩</mo></mrow></math>"#, "( − ∞ ; [3]− 4 ⟩"),
+            (r"-3 < x", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>−</mo><mn>3</mn><mo>&lt;</mo><mi>x</mi></mrow></math>"#, "− 3 [5]< [5]x"),
+            (r"a - b", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>a</mi><mo>−</mo><mi>b</mi></mrow></math>"#, "a [4]− [4]b"),
+            (r"x^{-1}", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi>x</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup></mrow></math>"#, "x ?− 1"),
+            (r"\{x \in \mathbb{R}; -3 < x\}", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">{</mo><mi>x</mi><mo>∈</mo><mi mathvariant="double-struck">R</mi><mo separator="true">;</mo><mo>−</mo><mn>3</mn><mo>&lt;</mo><mi>x</mi><mo stretchy="false">}</mo></mrow></math>"#, "{ x [5]∈ [5]ℝ ; [3]− 3 [5]< [5]x }"),
+            (r"5 - 3x \ge 17", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mn>5</mn><mo>−</mo><mn>3</mn><mi>x</mi><mo>≥</mo><mn>17</mn></mrow></math>"#, "5 [4]− [4]3 x [5]≥ [5]1 7"),
+            (r"f(-x)", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>f</mi><mo stretchy="false">(</mo><mo>−</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></math>"#, "f ( − x )"),
+            (r"[-1, 1]", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo stretchy="false">[</mo><mo>−</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">]</mo></mrow></math>"#, "[ − 1 , [3]1 ]"),
+            (r"-x + 1", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo>−</mo><mi>x</mi><mo>+</mo><mn>1</mn></mrow></math>"#, "− x [4]+ [4]1"),
+            (r"x = -3", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi><mo>=</mo><mo>−</mo><mn>3</mn></mrow></math>"#, "x [5]= [5]− 3"),
+            (r"a, -3", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>a</mi><mo separator="true">,</mo><mo>−</mo><mn>3</mn></mrow></math>"#, "a , [3]− 3"),
+            (r"x; -3", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>x</mi><mo separator="true">;</mo><mo>−</mo><mn>3</mn></mrow></math>"#, "x ; [3]− 3"),
+            (r"K = (-5; \infty)", r#"<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>K</mi><mo>=</mo><mo stretchy="false">(</mo><mo>−</mo><mn>5</mn><mo separator="true">;</mo><mi mathvariant="normal">∞</mi><mo stretchy="false">)</mo></mrow></math>"#, "K [5]= [5]( − 5 ; [3]∞ )"),
+        ];
+        for (tex, mathml, expected) in cases {
+            let ir = parse(&serde_json::json!({
+                "version": 1, "locale": "sk", "kind": "worksheet", "title": "Nerovnice",
+                "blocks": [{ "kind": "paragraph", "content": [{ "kind": "math", "tex": tex, "mathml": mathml }] }]
+            }).to_string());
+            let (mut doc, report) = render(&ir).expect("render");
+            assert!(report.warnings.is_empty(), "{tex}: {:?}", report.warnings);
+            let expected: Vec<(char, Option<f64>)> = expected
+                .split(' ')
+                .map(|token| {
+                    if let Some(glyph) = token.strip_prefix('?') {
+                        (glyph.chars().next().unwrap(), None)
+                    } else if let Some((space, glyph)) = token.strip_prefix('[').and_then(|t| t.split_once(']')) {
+                        (glyph.chars().next().unwrap(), Some(space.parse().unwrap()))
+                    } else {
+                        (token.chars().next().unwrap(), Some(0.0))
+                    }
+                })
+                .collect();
+            let reopened = Document::from_bytes(&doc.to_bytes().expect("DOCX")).expect("reopen DOCX");
+            for document in [&doc, &reopened] {
+                let glyphs = formula_glyphs(document);
+                let text: String = glyphs.iter().map(|g| g.0).collect();
+                let wanted: String = expected.iter().map(|e| e.0).collect();
+                assert_eq!(text, wanted, "{tex}: glyphs");
+                for (index, (glyph, space)) in expected.iter().enumerate().skip(1) {
+                    let Some(space) = space else { continue };
+                    let (_, left, _, size) = glyphs[index];
+                    let previous_right = glyphs[index - 1].2;
+                    let actual = (left - previous_right) * 18.0 / size;
+                    assert!(
+                        (actual - space).abs() < 0.05,
+                        "{tex}: {actual:.2} mu before `{glyph}`, KaTeX has {space} mu"
+                    );
+                }
+            }
+        }
+    }
+
+    /// Word lays out Office Math itself, so the DOCX carries no spacing
+    /// characters; a list comma between digits stays its own run so it is not
+    /// read as a decimal comma.
+    #[test]
+    fn word_equations_carry_atoms_without_baked_spacing() {
+        let ir = parse(&serde_json::json!({
+            "version": 1, "locale": "sk", "kind": "worksheet", "title": "Intervaly",
+            "blocks": [{ "kind": "paragraph", "content": [
+                { "kind": "math", "tex": "(-3; 2]", "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mo stretchy=\"false\">(</mo><mo>−</mo><mn>3</mn><mo separator=\"true\">;</mo><mn>2</mn><mo stretchy=\"false\">]</mo></mrow></math>" },
+                { "kind": "text", "text": " a " },
+                { "kind": "math", "tex": "[-1, 1]", "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mo stretchy=\"false\">[</mo><mo>−</mo><mn>1</mn><mo separator=\"true\">,</mo><mn>1</mn><mo stretchy=\"false\">]</mo></mrow></math>" },
+                { "kind": "text", "text": " a " },
+                { "kind": "math", "tex": "2{,}5", "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\"><mrow><mn>2,5</mn></mrow></math>" }
+            ] }]
+        }).to_string());
+        let (mut doc, report) = render(&ir).expect("render");
+        assert!(report.warnings.is_empty(), "{:?}", report.warnings);
+        let reopened = Document::from_bytes(&doc.to_bytes().expect("DOCX")).expect("reopen DOCX");
+        let runs: Vec<Vec<String>> = reopened
+            .paragraphs()
+            .iter()
+            .flat_map(|p| p.equations().map(|eq| String::from_utf8(eq.to_xml().expect("OMML")).unwrap()).collect::<Vec<_>>())
+            .map(|xml| xml.split("<m:t>").skip(1).map(|t| t.split_once("</m:t>").unwrap().0.to_owned()).collect())
+            .collect();
+        assert_eq!(runs, [vec!["(−3;2]"], vec!["[−1", ",", "1]"], vec!["2,5"]]);
+    }
 }
