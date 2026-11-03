@@ -53,10 +53,8 @@ pub const LIST_INDENT_MM: f64 = 6.0;
 pub const TASK_GUTTER_MM: f64 = 8.5;
 /// Hanging gutter for option letters.
 pub const OPTION_GUTTER_MM: f64 = 7.0;
-/// Width of the accent bar on panels.
-pub const PANEL_BAR_MM: f64 = 1.4;
-
 pub struct PanelColors {
+    /// Accent for the panel label; not a decorative side rail.
     pub bar: &'static str,
     pub fill: &'static str,
 }

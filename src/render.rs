@@ -1462,10 +1462,9 @@ fn render_cell_blocks(cell: &mut Cell<'_>, ctx: &mut Ctx, frame: &Frame, blocks:
 fn render_panel<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, variant: PanelVariant, label: Option<&str>, blocks: &[Block]) {
     let colors = panel_colors(variant);
     let total = frame.inner_width();
-    let bar = t::PANEL_BAR_MM;
     let pad_h = 3.5;
     let pad_v = 2.4;
-    let body_w = total - bar;
+    let body_w = total;
 
     // One table row per content unit (paragraph, list item, …) so both Word
     // and the PDF layout engine can break a long panel between units instead
@@ -1478,27 +1477,25 @@ fn render_panel<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, variant: Pa
     let row_count = units.len();
 
     gap(sink, 2.0);
-    let mut table = sink.table(row_count, 2);
+    let mut table = sink.table(row_count, 1);
     table.set_width(Length::mm(total));
     table.set_layout_fixed();
     if frame.indent > 0.0 {
         table.set_indent(Length::mm(frame.indent));
     }
-    table.set_column_width(0, Length::mm(bar));
-    table.set_column_width(1, Length::mm(body_w));
+    table.set_column_width(0, Length::mm(body_w));
     table.set_borders(BorderStyle::None, 0, "auto");
     table.set_cell_margins(Length::mm(0.0), Length::mm(pad_h), Length::mm(0.0), Length::mm(pad_h));
 
     let inner = Frame::new(body_w - 2.0 * pad_h);
     let last = row_count - 1;
     for (row_idx, unit) in units.iter().enumerate() {
-        panel_bar_cell(&mut table, row_idx, bar, colors.bar);
         if let Some(mut row) = table.row(row_idx) {
             if estimate_chars(unit) <= 320 {
                 row.set_cant_split();
             }
         }
-        if let Some(mut cell) = table.cell(row_idx, 1) {
+        if let Some(mut cell) = table.cell(row_idx, 0) {
             cell.set_width(Length::mm(body_w));
             cell.set_shading(colors.fill);
             // The label shares the first row with the first unit so it can
@@ -1528,20 +1525,6 @@ fn render_panel<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, variant: Pa
         }
     }
     gap(sink, 5.0);
-}
-
-/// Shaded accent bar cell of a panel row (empty 1pt paragraph, zero spacing).
-fn panel_bar_cell(table: &mut Table<'_>, row: usize, bar: f64, color: &str) {
-    if let Some(mut bar_cell) = table.cell(row, 0) {
-        bar_cell.set_width(Length::mm(bar));
-        bar_cell.set_shading(color);
-        let mut p = bar_cell.paragraph_mut(0).expect("fresh cell has a paragraph");
-        p.set_space_before(Length::pt(0.0));
-        p.set_space_after(Length::pt(0.0));
-        p.set_line_spacing(1.0);
-        let mut r = p.add_run("");
-        r.set_size(1.0);
-    }
 }
 
 /// Split panel content into breakable units: every block is a unit, except
@@ -2152,6 +2135,40 @@ fn footer_mark(ctx: &mut Ctx, mark: &crate::ir::Watermark) -> Option<FooterMark>
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn panels_keep_labels_and_soft_fills_without_an_accent_column() {
+        let variants = ["tip", "warning", "success", "story", "solution"];
+        let blocks: Vec<_> = variants.iter().map(|variant| serde_json::json!({
+            "kind": "panel", "variant": variant, "label": variant,
+            "blocks": [
+                {"kind": "paragraph", "content": [{"kind": "text", "text": "První řádek."}]},
+                {"kind": "paragraph", "content": [{"kind": "text", "text": "Druhý řádek."}]}
+            ]
+        })).collect();
+        let ir = parse(&serde_json::json!({
+            "version": 1, "locale": "cs", "kind": "worksheet", "title": "Panels", "blocks": blocks
+        }).to_string());
+        let (mut doc, report) = render(&ir).unwrap();
+        assert!(report.warnings.is_empty());
+        let bytes = doc.to_bytes().unwrap();
+        let mut zip = zip::ZipArchive::new(std::io::Cursor::new(&bytes)).unwrap();
+        let mut xml = String::new();
+        std::io::Read::read_to_string(&mut zip.by_name("word/document.xml").unwrap(), &mut xml).unwrap();
+        // Each content row occupies one column, with no extra empty stripe cell.
+        assert_eq!(xml.matches("<w:gridCol ").count(), variants.len());
+        assert_eq!(xml.matches("<w:tc>").count(), variants.len() * 2);
+        for variant in variants {
+            assert!(xml.contains(&variant.to_uppercase()));
+        }
+        for fill in ["EEF4FD", "FDF5E6", "EBF8F2", "FBF4E8", "EEF7F1"] {
+            assert!(xml.contains(&format!("w:fill=\"{fill}\"")));
+        }
+        assert_eq!(xml.matches("První řádek.").count(), variants.len());
+        assert_eq!(xml.matches("Druhý řádek.").count(), variants.len());
+        let reopened = Document::from_bytes(&bytes).unwrap();
+        assert!(reopened.to_pdf().unwrap().starts_with(b"%PDF"));
+    }
 
     #[test]
     fn code_blocks_keep_literal_text_and_regular_monospace_in_word_and_pdf() {
