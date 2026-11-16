@@ -13,7 +13,8 @@ use std::hash::{Hash, Hasher};
 use base64::Engine;
 use unicode_segmentation::UnicodeSegmentation;
 use rdocx::{
-    Alignment, BorderStyle, Cell, Document, HdrFtrType, Length, OfficeMath, Paragraph, Table,
+    Alignment, BorderStyle, Cell, Document, HdrFtrType, Length, OfficeMath, Paragraph,
+    ParagraphBorderEdge, Table,
     TabAlignment, UnderlineStyle, VerticalAlignment, equation_from_latex, equation_from_mathml,
 };
 
@@ -844,6 +845,10 @@ fn render_block<S: Sink>(sink: &mut S, ctx: &mut Ctx, frame: &Frame, block: &Blo
                     p.set_indent_left(Length::mm(frame.indent));
                 }
                 p.set_border_bottom(BorderStyle::Dotted, 6, t::BLANK_LINE);
+                // Word (and rdocx's layout) merges consecutive paragraphs with identical
+                // borders into one group that only draws its bottom edge, so N lines printed
+                // as one rule. The between edge rules every line inside the group.
+                p.set_border(ParagraphBorderEdge::Between, BorderStyle::Dotted, 6, t::BLANK_LINE);
                 let mut r = p.add_run("");
                 r.set_size(t::PT_BODY);
                 r.set_font(t::FONT_BODY);
@@ -2433,6 +2438,18 @@ mod tests {
         )
     }
 
+
+    #[test]
+    fn answer_lines_rule_every_line_not_only_the_group() {
+        let (mut doc, _) = render(&sample_test()).unwrap();
+        let bytes = doc.to_bytes().unwrap();
+        let mut archive = zip::ZipArchive::new(std::io::Cursor::new(bytes)).unwrap();
+        let mut xml = String::new();
+        std::io::Read::read_to_string(&mut archive.by_name("word/document.xml").unwrap(), &mut xml)
+            .unwrap();
+        // The sample's three write-in lines each carry a between edge.
+        assert!(xml.matches("<w:between ").count() >= 3, "{}", xml.matches("<w:between ").count());
+    }
 
     #[test]
     fn theme_colours_expand_shorthand_and_reject_invalid_ooxml_values() {
