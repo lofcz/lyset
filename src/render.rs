@@ -2610,7 +2610,8 @@ mod tests {
             for document in [&doc, &reopened] {
                 assert_eq!(document.paragraphs().iter().map(|p| p.equations().count()).sum::<usize>(), 2);
                 let layout = document.layout().unwrap();
-                assert!(layout.layout.diagnostics.is_empty(), "{:?}", layout.layout.diagnostics);
+                let problems = layout_problems(&layout.layout.diagnostics);
+                assert!(problems.is_empty(), "{problems:?}");
                 let mut found = false;
                 for page in &layout.layout.pages {
                     oxml_layout::walk(&page.elements, &mut |element, _| {
@@ -2642,7 +2643,7 @@ mod tests {
         for document in [&doc, &reopened] {
             assert!(document.paragraphs().iter().any(|p| p.text().contains("\\text{unavailable}")));
             assert_eq!(document.paragraphs().iter().map(|p| p.equations().count()).sum::<usize>(), 1);
-            assert!(document.layout().unwrap().layout.diagnostics.is_empty());
+            assert!(layout_problems(&document.layout().unwrap().layout.diagnostics).is_empty());
             assert!(document.to_pdf().unwrap().starts_with(b"%PDF"));
         }
     }
@@ -2839,8 +2840,19 @@ mod tests {
         assert!(equations[0].contains("m:borderBox"));
         assert!(!equations[0].contains("underline"));
         let layout = reopened.layout().unwrap();
-        assert!(layout.layout.diagnostics.is_empty());
+        assert!(layout_problems(&layout.layout.diagnostics).is_empty());
         assert!(reopened.to_pdf().unwrap().starts_with(b"%PDF"));
+    }
+
+    /// Layout diagnostics other than the bundled metric-compatible font
+    /// substitution rdocx reports for every document (Calibri as Carlito),
+    /// which is expected because system fonts are disabled.
+    fn layout_problems(diagnostics: &[oxml_layout::Diagnostic]) -> Vec<&str> {
+        diagnostics
+            .iter()
+            .map(|d| d.message.as_str())
+            .filter(|m| !(m.starts_with("Font '") && m.contains("' substituted: selected '") && m.ends_with("' from the bundled tier")))
+            .collect()
     }
 
     /// Glyphs of the only formula in a laid-out document, left to right:
